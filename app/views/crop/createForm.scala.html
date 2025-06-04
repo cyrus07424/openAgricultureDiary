@@ -1,0 +1,48 @@
+@(cropForm: Form[Crop], companies: Map[String, String])(implicit request: Http.Request, messages: play.i18n.Messages)
+
+@import helper._
+
+@implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
+
+@main {
+
+    <h1 class="my-3" id="page-title">Add a crop</h1>
+
+    @form(routes.CropController.save()) {
+
+        @CSRF.formField
+        <div class="row">
+            <div class="col-md-3 mb-3">
+            @inputText(cropForm("name"), Symbol("_label") -> "Crop name", Symbol("_help") -> "")
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+            @inputDate(cropForm("introduced"), Symbol("_label") -> "Introduced date", Symbol("_help") -> "")
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+            @inputDate(cropForm("discontinued"), Symbol("_label") -> "Discontinued date", Symbol("_help") -> "")
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 mb-3">
+            @select(
+                cropForm("company.id"),
+                options(companies),
+                Symbol("_label") -> "Company", Symbol("_default") -> "-- Choose a company --",
+                Symbol("_showConstraints") -> false
+            )
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-success" type="submit">Create this crop</button>
+            <span class="mx-2">or</span>
+            <a href="@routes.CropController.list()" id="add" class="btn btn-light" role="button">Cancel</a>
+        </div>
+    }
+
+}

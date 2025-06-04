@@ -2,12 +2,26 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
-
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(file)
+GET         /assets/*file            controllers.Assets.versioned(file)
+
+# An example controller showing a sample home page
+GET         /                        controllers.HomeController.index(request: Request)
+# An example controller showing how to use dependency injection
+GET         /count                   controllers.CountController.count
+# An example controller showing how to write asynchronous code
+GET         /message                 controllers.AsyncController.message
+
+# Crops list (look at the default values for pagination parameters)
+GET         /crops                   controllers.CropController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+
+# Add crop
+GET         /crops/new               controllers.CropController.create(request: Request)
+POST        /crops                   controllers.CropController.save(request: Request)
+
+# Edit existing crop
+GET         /crops/:id               controllers.CropController.edit(request: Request, id:Long)
+POST        /crops/:id               controllers.CropController.update(request: Request, id:Long)
+
+# Delete a crop
+POST        /crops/:id/delete        controllers.CropController.delete(id:Long)

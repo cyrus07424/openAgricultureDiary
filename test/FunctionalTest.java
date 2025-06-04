@@ -1,27 +1,76 @@
-import controllers.AssetsFinder;
+import controllers.routes;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import play.mvc.Result;
 import play.test.WithApplication;
-import play.twirl.api.Content;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static play.api.test.CSRFTokenHelper.addCSRFToken;
+import static play.test.Helpers.*;
 
-/**
- * A functional test starts a Play application for every test.
- *
- * https://www.playframework.com/documentation/latest/JavaFunctionalTest
- */
+// Use FixMethodOrder to run the tests sequentially
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FunctionalTest extends WithApplication {
 
     @Test
-    public void renderTemplate() {
-        // If you are calling out to Assets, then you must instantiate an application
-        // because it makes use of assets metadata that is configured from
-        // the application.
+    public void redirectHomePage() {
+        Result result = route(app, controllers.routes.HomeController.index());
 
-        AssetsFinder assetsFinder = provideApplication().injector().instanceOf(AssetsFinder.class);
-
-        Content html = views.html.index.render("Your new application is ready.", assetsFinder);
-        assertThat("text/html").isEqualTo(html.contentType());
-        assertThat(html.body()).contains("Your new application is ready.");
+        assertThat(result.status()).isEqualTo(SEE_OTHER);
+        assertThat(result.redirectLocation().get()).isEqualTo("/crops");
     }
+
+    @Test
+    public void listCropsOnTheFirstPage() {
+        Result result = route(app, controllers.routes.CropController.list(0, "name", "asc", ""));
+
+        assertThat(result.status()).isEqualTo(OK);
+        assertThat(contentAsString(result)).contains("574 crops found");
+    }
+
+    @Test
+    public void filterCropByName() {
+        Result result = route(app, controllers.routes.CropController.list(0, "name", "asc", "Apple"));
+
+        assertThat(result.status()).isEqualTo(OK);
+        assertThat(contentAsString(result)).contains("13 crops found");
+    }
+
+    @Test
+    public void createANewCrop() {
+        Result result = route(app, addCSRFToken(fakeRequest().uri(controllers.routes.CropController.save().url())));
+        assertThat(result.status()).isEqualTo(OK);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("name", "FooBar");
+        data.put("introduced", "badbadbad");
+        data.put("company.id", "1");
+
+        String saveUrl = controllers.routes.CropController.save().url();
+        result = route(app, addCSRFToken(fakeRequest().bodyForm(data).method("POST").uri(saveUrl)));
+
+        assertThat(result.status()).isEqualTo(BAD_REQUEST);
+        assertThat(contentAsString(result)).contains("<option value=\"1\" selected=\"selected\">Apple Inc.</option>");
+        //  <input type="text" id="introduced" name="introduced" value="badbadbad" aria-describedby="introduced_info_0 introduced_error_0" aria-invalid="true" class="form-control">
+        assertThat(contentAsString(result)).contains("<input class=\"form-control is-invalid\" type=\"date\" id=\"introduced\" name=\"introduced\" value=\"badbadbad\" ");
+        // <input type="text" id="name" name="name" value="FooBar" aria-describedby="name_info_0" required="true" class="form-control">
+        assertThat(contentAsString(result)).contains("<input class=\"form-control\" type=\"text\" id=\"name\" name=\"name\" value=\"FooBar\" ");
+
+        data.put("introduced", "2011-12-24");
+
+        result = route(app, fakeRequest().bodyForm(data).method("POST").uri(saveUrl));
+
+        assertThat(result.status()).isEqualTo(SEE_OTHER);
+        assertThat(result.redirectLocation().get()).isEqualTo("/crops");
+        assertThat(result.flash().get("success").get()).isEqualTo("Crop FooBar has been created");
+
+        result = route(app, controllers.routes.CropController.list(0, "name", "asc", "FooBar"));
+        assertThat(result.status()).isEqualTo(OK);
+        assertThat(contentAsString(result)).contains("One crop found");
+    }
+
 }

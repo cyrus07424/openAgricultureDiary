@@ -1,5 +1,5 @@
 lazy val root = (project in file("."))
-  .enablePlugins(PlayJava)
+  .enablePlugins(PlayJava, PlayEbean)
   //.enablePlugins(PlayNettyServer).disablePlugins(PlayPekkoHttpServer) // uncomment to use the Netty backend
   .settings(
     name := """open-agriculture-diary""",
@@ -8,6 +8,7 @@ lazy val root = (project in file("."))
     scalaVersion := crossScalaVersions.value.head,
     libraryDependencies ++= Seq(
       guice,
+      jdbc,
       // Test Database
       "com.h2database" % "h2" % "2.3.232",
       // Testing libraries for dealing with CompletionStage...

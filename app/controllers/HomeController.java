@@ -1,8 +1,9 @@
 package controllers;
 
-import play.mvc.*;
-
-import views.html.*;
+import play.mvc.Controller;
+import play.mvc.Http;
+import play.mvc.Result;
+import play.mvc.Results;
 
 import javax.inject.Inject;
 
@@ -20,17 +21,10 @@ public class HomeController extends Controller {
     }
 
     /**
-     * An action that renders an HTML page with a welcome message.
-     * The configuration in the <code>routes</code> file means that
-     * this method will be called when the application receives a
-     * <code>GET</code> request with a path of <code>/</code>.
+     * Handle default path requests, redirect to crops list
      */
-    public Result index() {
-        return ok(
-            index.render(
-                "Your new application is ready.",
-                assetsFinder
-            ));
+    public Result index(Http.Request request) {
+        return Results.redirect(
+                routes.CropController.list(0, "name", "asc", ""));
     }
-
 }
