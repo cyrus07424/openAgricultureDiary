@@ -9,6 +9,8 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       guice,
       jdbc,
+      // Password hashing
+      "org.mindrot" % "jbcrypt" % "0.4",
       // Test Database
       "com.h2database" % "h2" % "2.3.232",
       // Testing libraries for dealing with CompletionStage...
