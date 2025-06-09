@@ -21,10 +21,14 @@ public class HomeController extends Controller {
     }
 
     /**
-     * Handle default path requests, redirect to crops list
+     * Handle default path requests, redirect to crops list if authenticated, otherwise to login
      */
     public Result index(Http.Request request) {
-        return Results.redirect(
-                routes.CropController.list(0, "name", "asc", ""));
+        // Check if user is logged in
+        if (request.session().get("userId").isPresent()) {
+            return Results.redirect(routes.CropController.list(0, "name", "asc", ""));
+        } else {
+            return Results.redirect(routes.AuthController.showLogin());
+        }
     }
 }

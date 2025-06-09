@@ -4,11 +4,23 @@
 
 @implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
 
-@main {
+@authLayout {
+
+  @request.flash.asScala().get("success").map { successFlashValue =>
+    <div class="alert alert-success" role="alert">
+      @successFlashValue
+    </div>
+  }
+
+  @request.flash.asScala().get("error").map { errorFlashValue =>
+    <div class="alert alert-danger" role="alert">
+      @errorFlashValue
+    </div>
+  }
 
   <div class="row">
     <div class="col-md-6 offset-md-3">
-      <div class="card">
+      <div class="card mt-5">
         <div class="card-header">
           <h3>ユーザー登録</h3>
         </div>
@@ -26,19 +38,19 @@
             
             @CSRF.formField
             
-            <div class="form-group">
+            <div class="form-group mb-3">
               @inputText(registerForm("username"), Symbol("_label") -> "ユーザー名", Symbol("class") -> "form-control")
             </div>
             
-            <div class="form-group">
+            <div class="form-group mb-3">
               @inputText(registerForm("email"), Symbol("_label") -> "メールアドレス", Symbol("class") -> "form-control", Symbol("_type") -> "email")
             </div>
             
-            <div class="form-group">
+            <div class="form-group mb-3">
               @inputPassword(registerForm("password"), Symbol("_label") -> "パスワード（6文字以上）", Symbol("class") -> "form-control")
             </div>
             
-            <div class="form-group">
+            <div class="form-group mb-3">
               @inputPassword(registerForm("confirmPassword"), Symbol("_label") -> "パスワード確認", Symbol("class") -> "form-control")
             </div>
             

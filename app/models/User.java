@@ -2,6 +2,7 @@ package models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import play.data.validation.Constraints;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * User entity managed by Ebean
  */
 @Entity
+@Table(name = "app_user")
 public class User extends BaseModel {
 
     private static final long serialVersionUID = 1L;
