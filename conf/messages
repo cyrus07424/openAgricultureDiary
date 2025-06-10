@@ -2,4 +2,6 @@
 
 crops.list.title={0,choice,0#No crops|1#One crop|1<{0,number,integer} crops} found
 
+fields.list.title={0,choice,0#No fields|1#One field|1<{0,number,integer} fields} found
+
 

@@ -32,3 +32,17 @@ POST        /crops/:id               controllers.CropController.update(request: 
 
 # Delete a crop
 POST        /crops/:id/delete        controllers.CropController.delete(request: Request, id:Long)
+
+# Fields list (look at the default values for pagination parameters)
+GET         /fields                  controllers.FieldController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+
+# Add field
+GET         /fields/new              controllers.FieldController.create(request: Request)
+POST        /fields                  controllers.FieldController.save(request: Request)
+
+# Edit existing field
+GET         /fields/:id              controllers.FieldController.edit(request: Request, id:Long)
+POST        /fields/:id              controllers.FieldController.update(request: Request, id:Long)
+
+# Delete a field
+POST        /fields/:id/delete       controllers.FieldController.delete(request: Request, id:Long)

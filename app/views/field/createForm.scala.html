@@ -1,0 +1,68 @@
+@(fieldForm: Form[models.Field])(implicit request: Http.Request, messages: play.i18n.Messages)
+
+@import helper._
+
+@implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
+
+@main {
+
+    <h1 class="my-3" id="page-title">Add a field</h1>
+
+    @form(routes.FieldController.save()) {
+
+        @CSRF.formField
+        <div class="row">
+            <div class="col-md-6 mb-3">
+            @inputText(fieldForm("name"), Symbol("_label") -> "Field name", Symbol("_help") -> "")
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <h4>Field Area (Rectangular Selection)</h4>
+                <p class="text-muted">Enter the coordinates for the rectangular field area:</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 mb-3">
+            @inputText(fieldForm("northEastLatitude"), Symbol("_label") -> "North East Latitude", Symbol("_help") -> "")
+            </div>
+            <div class="col-md-3 mb-3">
+            @inputText(fieldForm("northEastLongitude"), Symbol("_label") -> "North East Longitude", Symbol("_help") -> "")
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 mb-3">
+            @inputText(fieldForm("southWestLatitude"), Symbol("_label") -> "South West Latitude", Symbol("_help") -> "")
+            </div>
+            <div class="col-md-3 mb-3">
+            @inputText(fieldForm("southWestLongitude"), Symbol("_label") -> "South West Longitude", Symbol("_help") -> "")
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <div id="map" style="height: 400px; border: 1px solid #ccc;"></div>
+                <p class="text-muted mt-2">Click and drag on the map to select a rectangular area for your field.</p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-success" type="submit">Create this field</button>
+            <span class="mx-2">or</span>
+            <a href="@routes.FieldController.list()" id="add" class="btn btn-light" role="button">Cancel</a>
+        </div>
+    }
+
+    <script>
+        // Basic map integration placeholder
+        // This would be enhanced with actual map library (Leaflet, Google Maps, etc.)
+        document.addEventListener('DOMContentLoaded', function() {
+            var mapElement = document.getElementById('map');
+            mapElement.innerHTML = '<div style="text-align: center; padding-top: 180px; color: #666;">Map integration will be implemented here<br/>For now, please enter coordinates manually</div>';
+        });
+    </script>
+
+}
