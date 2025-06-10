@@ -1,7 +1,10 @@
 package controllers;
 
+import actions.Authenticated;
+import actions.AuthenticatedAction;
 import jakarta.persistence.PersistenceException;
 import models.Crop;
+import models.User;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.MessagesApi;
@@ -15,24 +18,12 @@ import repository.CropRepository;
 import views.html.crop.createForm;
 import views.html.crop.editForm;
 import views.html.crop.list;
-import play.data.Form;
-import play.data.FormFactory;
-import play.i18n.MessagesApi;
-import play.libs.concurrent.ClassLoaderExecutionContext;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
-import play.mvc.Results;
-import repository.CompanyRepository;
 
-import javax.inject.Inject;
-import jakarta.persistence.PersistenceException;
-import java.util.Map;
-import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
+@Authenticated
 public class CropController extends Controller {
 
     private final CropRepository cropRepository;
@@ -54,6 +45,10 @@ public class CropController extends Controller {
         this.messagesApi = messagesApi;
     }
 
+    private User getCurrentUser(Http.Request request) {
+        return request.attrs().get(AuthenticatedAction.USER_KEY);
+    }
+
     /**
      * This result directly redirect to application home.
      */
@@ -70,8 +65,9 @@ public class CropController extends Controller {
      * @param filter Filter applied on crop names
      */
     public CompletionStage<Result> list(Http.Request request, int page, String sortBy, String order, String filter) {
+        User user = getCurrentUser(request);
         // Run a db operation in another thread (using DatabaseExecutionContext)
-        return cropRepository.page(page, 10, sortBy, order, filter).thenApplyAsync(pagedList -> {
+        return cropRepository.pageByUser(page, 10, sortBy, order, filter, user.getId()).thenApplyAsync(pagedList -> {
             // This is the HTTP rendering thread context
             return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request)));
         }, classLoaderExecutionContext.current());
@@ -83,12 +79,16 @@ public class CropController extends Controller {
      * @param id Id of the crop to edit
      */
     public CompletionStage<Result> edit(Http.Request request, Long id) {
+        User user = getCurrentUser(request);
 
         // Run a db operation in another thread (using DatabaseExecutionContext)
         CompletionStage<Map<String, String>> companiesFuture = companyRepository.options();
 
         // Run the lookup also in another thread, then combine the results:
-        return cropRepository.lookup(id).thenCombineAsync(companiesFuture, (cropOptional, companies) -> {
+        return cropRepository.lookupByUser(id, user.getId()).thenCombineAsync(companiesFuture, (cropOptional, companies) -> {
+            if (cropOptional.isEmpty()) {
+                return notFound("Crop not found or you don't have permission to access it");
+            }
             // This is the HTTP rendering thread context
             Crop c = cropOptional.get();
             Form<Crop> cropForm = formFactory.form(Crop.class).fill(c);
@@ -102,6 +102,7 @@ public class CropController extends Controller {
      * @param id Id of the crop to edit
      */
     public CompletionStage<Result> update(Http.Request request, Long id) throws PersistenceException {
+        User user = getCurrentUser(request);
         Form<Crop> cropForm = formFactory.form(Crop.class).bindFromRequest(request);
         if (cropForm.hasErrors()) {
             // Run companies db operation and then render the failure case
@@ -111,8 +112,12 @@ public class CropController extends Controller {
             }, classLoaderExecutionContext.current());
         } else {
             Crop newCropData = cropForm.get();
+            newCropData.setUser(user); // Ensure the crop belongs to current user
             // Run update operation and then flash and then redirect
-            return cropRepository.update(id, newCropData).thenApplyAsync(data -> {
+            return cropRepository.updateByUser(id, newCropData, user.getId()).thenApplyAsync(data -> {
+                if (data.isEmpty()) {
+                    return notFound("Crop not found or you don't have permission to update it");
+                }
                 // This is the HTTP rendering thread context
                 return GO_CROP_LIST
                         .flashing("success", "Crop " + newCropData.getName() + " has been updated");
@@ -136,6 +141,7 @@ public class CropController extends Controller {
      * Handle the 'new crop form' submission
      */
     public CompletionStage<Result> save(Http.Request request) {
+        User user = getCurrentUser(request);
         Form<Crop> cropForm = formFactory.form(Crop.class).bindFromRequest(request);
         if (cropForm.hasErrors()) {
             // Run companies db operation and then render the form
@@ -146,6 +152,7 @@ public class CropController extends Controller {
         }
 
         Crop crop = cropForm.get();
+        crop.setUser(user); // Set the current user as the owner
         // Run insert db operation, then redirect
         return cropRepository.insert(crop).thenApplyAsync(data -> {
             // This is the HTTP rendering thread context
@@ -157,9 +164,13 @@ public class CropController extends Controller {
     /**
      * Handle crop deletion
      */
-    public CompletionStage<Result> delete(Long id) {
+    public CompletionStage<Result> delete(Http.Request request, Long id) {
+        User user = getCurrentUser(request);
         // Run delete db operation, then redirect
-        return cropRepository.delete(id).thenApplyAsync(v -> {
+        return cropRepository.deleteByUser(id, user.getId()).thenApplyAsync(success -> {
+            if (!success) {
+                return notFound("Crop not found or you don't have permission to delete it");
+            }
             // This is the HTTP rendering thread context
             return GO_CROP_LIST
                     .flashing("success", "Crop has been deleted");

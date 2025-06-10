@@ -27,11 +27,15 @@ public class Crop extends BaseModel {
     @ManyToOne
     private Company company;
 
+    @ManyToOne
+    private User user;
+
     public void update(Crop newCropData) {
         setName(newCropData.getName());
         setCompany(newCropData.getCompany());
         setDiscontinued(newCropData.getDiscontinued());
         setIntroduced(newCropData.getIntroduced());
+        setUser(newCropData.getUser());
         update();
     }
 
@@ -65,6 +69,14 @@ public class Crop extends BaseModel {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
 
