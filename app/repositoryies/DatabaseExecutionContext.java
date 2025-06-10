@@ -1,4 +1,4 @@
-package repository;
+package repositoryies;
 
 import org.apache.pekko.actor.ActorSystem;
 import play.libs.concurrent.CustomExecutionContext;

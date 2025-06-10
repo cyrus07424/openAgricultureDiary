@@ -1,8 +1,7 @@
-package repository;
+package repositoryies;
 
 import io.ebean.DB;
 import models.User;
-import play.db.ebean.EbeanConfig;
 
 import javax.inject.Inject;
 import java.util.Optional;

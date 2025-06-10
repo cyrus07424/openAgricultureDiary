@@ -1,4 +1,4 @@
-package repository;
+package repositoryies;
 
 import io.ebean.DB;
 import models.Company;

@@ -4,7 +4,7 @@ import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.test.WithApplication;
-import repository.CropRepository;
+import repositoryies.CropRepository;
 
 import java.util.Date;
 import java.util.Optional;

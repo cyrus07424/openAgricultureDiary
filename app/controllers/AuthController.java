@@ -11,7 +11,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
-import repository.UserRepository;
+import repositoryies.UserRepository;
 import views.html.auth.login;
 import views.html.auth.register;
 
