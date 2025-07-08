@@ -46,3 +46,17 @@ POST        /fields/:id              controllers.FieldController.update(request:
 
 # Delete a field
 POST        /fields/:id/delete       controllers.FieldController.delete(request: Request, id:Long)
+
+# Work history list (look at the default values for pagination parameters)
+GET         /work-history            controllers.WorkHistoryController.list(request: Request, p:Int ?= 0, s ?= "date", o ?= "desc", f ?= "")
+
+# Add work history
+GET         /work-history/new        controllers.WorkHistoryController.create(request: Request)
+POST        /work-history            controllers.WorkHistoryController.save(request: Request)
+
+# Edit existing work history
+GET         /work-history/:id        controllers.WorkHistoryController.edit(request: Request, id:Long)
+POST        /work-history/:id        controllers.WorkHistoryController.update(request: Request, id:Long)
+
+# Delete a work history
+POST        /work-history/:id/delete controllers.WorkHistoryController.delete(request: Request, id:Long)

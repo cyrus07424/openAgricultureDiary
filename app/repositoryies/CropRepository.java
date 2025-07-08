@@ -8,6 +8,9 @@ import models.Crop;
 
 import javax.inject.Inject;
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -162,5 +165,23 @@ public class CropRepository {
              DB.insert(crop);
              return crop.getId();
         }, executionContext);
+    }
+
+    /**
+     * Get options for crops belonging to a specific user
+     */
+    public CompletionStage<Map<String, String>> optionsByUser(Long userId) {
+        return supplyAsync(() -> DB.find(Crop.class)
+                .where()
+                .eq("user.id", userId)
+                .orderBy("name")
+                .findList(), executionContext)
+                .thenApply(list -> {
+                    java.util.HashMap<String, String> options = new java.util.LinkedHashMap<String, String>();
+                    for (Crop c : list) {
+                        options.put(c.getId().toString(), c.getName());
+                    }
+                    return options;
+                });
     }
 }

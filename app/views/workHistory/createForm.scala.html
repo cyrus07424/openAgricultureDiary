@@ -1,0 +1,54 @@
+@(workHistoryForm: Form[models.WorkHistory], fields: Map[String, String], crops: Map[String, String])(implicit request: Http.Request, messages: play.i18n.Messages)
+
+@import helper._
+
+@implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
+
+@main {
+
+    <h1 class="my-3" id="page-title">Add a work history</h1>
+
+    @form(routes.WorkHistoryController.save()) {
+
+        @CSRF.formField
+        <div class="row">
+            <div class="col-md-6 mb-3">
+            @inputDate(workHistoryForm("date"), Symbol("_label") -> "Date", Symbol("_help") -> "")
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 mb-3">
+            @inputText(workHistoryForm("startTime"), Symbol("_label") -> "Start Time", Symbol("_help") -> "Format: HH:MM")
+            </div>
+            <div class="col-md-3 mb-3">
+            @inputText(workHistoryForm("endTime"), Symbol("_label") -> "End Time", Symbol("_help") -> "Format: HH:MM")
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+            @select(workHistoryForm("field.id"), options(fields), Symbol("_label") -> "Field", Symbol("_default") -> "-- Choose a field --", Symbol("_help") -> "")
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+            @select(workHistoryForm("crop.id"), options(crops), Symbol("_label") -> "Crop", Symbol("_default") -> "-- Choose a crop --", Symbol("_help") -> "")
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8 mb-3">
+            @textarea(workHistoryForm("content"), Symbol("_label") -> "Work Content", Symbol("_help") -> "Describe the work performed", Symbol("rows") -> "4")
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-success" type="submit">Create this work history</button>
+            <span class="mx-2">or</span>
+            <a href="@routes.WorkHistoryController.list()" id="add" class="btn btn-light" role="button">Cancel</a>
+        </div>
+    }
+
+}
