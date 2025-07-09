@@ -8,6 +8,9 @@ import models.Field;
 
 import javax.inject.Inject;
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -140,5 +143,23 @@ public class FieldRepository {
              DB.insert(field);
              return field.getId();
         }, executionContext);
+    }
+
+    /**
+     * Get options for fields belonging to a specific user
+     */
+    public CompletionStage<Map<String, String>> optionsByUser(Long userId) {
+        return supplyAsync(() -> DB.find(Field.class)
+                .where()
+                .eq("user.id", userId)
+                .orderBy("name")
+                .findList(), executionContext)
+                .thenApply(list -> {
+                    java.util.HashMap<String, String> options = new java.util.LinkedHashMap<String, String>();
+                    for (Field f : list) {
+                        options.put(f.getId().toString(), f.getName());
+                    }
+                    return options;
+                });
     }
 }
