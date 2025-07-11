@@ -18,6 +18,7 @@ import play.mvc.Results;
 import repositoryies.WorkHistoryRepository;
 import repositoryies.FieldRepository;
 import repositoryies.CropRepository;
+import utils.GoogleTagManager;
 import views.html.workHistory.createForm;
 import views.html.workHistory.editForm;
 import views.html.workHistory.list;
@@ -35,6 +36,7 @@ public class WorkHistoryController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final GoogleTagManager gtm;
 
     @Inject
     public WorkHistoryController(FormFactory formFactory,
@@ -42,13 +44,15 @@ public class WorkHistoryController extends Controller {
                                 FieldRepository fieldRepository,
                                 CropRepository cropRepository,
                                 ClassLoaderExecutionContext classLoaderExecutionContext,
-                                MessagesApi messagesApi) {
+                                MessagesApi messagesApi,
+                                GoogleTagManager gtm) {
         this.workHistoryRepository = workHistoryRepository;
         this.fieldRepository = fieldRepository;
         this.cropRepository = cropRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.gtm = gtm;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -75,7 +79,7 @@ public class WorkHistoryController extends Controller {
         // Run a db operation in another thread (using DatabaseExecutionContext)
         return workHistoryRepository.pageByUser(page, 10, sortBy, order, filter, user.getId()).thenApplyAsync(pagedList -> {
             // This is the HTTP rendering thread context
-            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request)));
+            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request), gtm));
         }, classLoaderExecutionContext.current());
     }
 
@@ -100,7 +104,7 @@ public class WorkHistoryController extends Controller {
             try {
                 Map<String, String> fields = fieldRepository.optionsByUser(user.getId()).toCompletableFuture().get();
                 Map<String, String> crops = cropRepository.optionsByUser(user.getId()).toCompletableFuture().get();
-                return ok(editForm.render(id, workHistoryForm, fields, crops, request, messagesApi.preferred(request)));
+                return ok(editForm.render(id, workHistoryForm, fields, crops, request, messagesApi.preferred(request), gtm));
             } catch (Exception e) {
                 return internalServerError("Error loading form data");
             }
@@ -121,7 +125,7 @@ public class WorkHistoryController extends Controller {
                 Map<String, String> fields = fieldRepository.optionsByUser(user.getId()).toCompletableFuture().get();
                 Map<String, String> crops = cropRepository.optionsByUser(user.getId()).toCompletableFuture().get();
                 return java.util.concurrent.CompletableFuture.completedFuture(
-                    badRequest(editForm.render(id, workHistoryForm, fields, crops, request, messagesApi.preferred(request)))
+                    badRequest(editForm.render(id, workHistoryForm, fields, crops, request, messagesApi.preferred(request), gtm))
                 );
             } catch (Exception e) {
                 return java.util.concurrent.CompletableFuture.completedFuture(internalServerError("Error loading form data"));
@@ -153,7 +157,7 @@ public class WorkHistoryController extends Controller {
             cropRepository.optionsByUser(user.getId()), 
             (fields, crops) -> {
                 // This is the HTTP rendering thread context
-                return ok(createForm.render(workHistoryForm, fields, crops, request, messagesApi.preferred(request)));
+                return ok(createForm.render(workHistoryForm, fields, crops, request, messagesApi.preferred(request), gtm));
             }, 
             classLoaderExecutionContext.current()
         );
@@ -171,7 +175,7 @@ public class WorkHistoryController extends Controller {
                 Map<String, String> fields = fieldRepository.optionsByUser(user.getId()).toCompletableFuture().get();
                 Map<String, String> crops = cropRepository.optionsByUser(user.getId()).toCompletableFuture().get();
                 return java.util.concurrent.CompletableFuture.completedFuture(
-                    badRequest(createForm.render(workHistoryForm, fields, crops, request, messagesApi.preferred(request)))
+                    badRequest(createForm.render(workHistoryForm, fields, crops, request, messagesApi.preferred(request), gtm))
                 );
             } catch (Exception e) {
                 return java.util.concurrent.CompletableFuture.completedFuture(internalServerError("Error loading form data"));

@@ -15,6 +15,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.CompanyRepository;
 import repositoryies.CropRepository;
+import utils.GoogleTagManager;
 import views.html.crop.createForm;
 import views.html.crop.editForm;
 import views.html.crop.list;
@@ -31,18 +32,21 @@ public class CropController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final GoogleTagManager gtm;
 
     @Inject
     public CropController(FormFactory formFactory,
                           CropRepository cropRepository,
                           CompanyRepository companyRepository,
                           ClassLoaderExecutionContext classLoaderExecutionContext,
-                          MessagesApi messagesApi) {
+                          MessagesApi messagesApi,
+                          GoogleTagManager gtm) {
         this.cropRepository = cropRepository;
         this.formFactory = formFactory;
         this.companyRepository = companyRepository;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.gtm = gtm;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -69,7 +73,7 @@ public class CropController extends Controller {
         // Run a db operation in another thread (using DatabaseExecutionContext)
         return cropRepository.pageByUser(page, 10, sortBy, order, filter, user.getId()).thenApplyAsync(pagedList -> {
             // This is the HTTP rendering thread context
-            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request)));
+            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request), gtm));
         }, classLoaderExecutionContext.current());
     }
 
@@ -92,7 +96,7 @@ public class CropController extends Controller {
             // This is the HTTP rendering thread context
             Crop c = cropOptional.get();
             Form<Crop> cropForm = formFactory.form(Crop.class).fill(c);
-            return ok(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request)));
+            return ok(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request), gtm));
         }, classLoaderExecutionContext.current());
     }
 
@@ -108,7 +112,7 @@ public class CropController extends Controller {
             // Run companies db operation and then render the failure case
             return companyRepository.options().thenApplyAsync(companies -> {
                 // This is the HTTP rendering thread context
-                return badRequest(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request)));
+                return badRequest(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request), gtm));
             }, classLoaderExecutionContext.current());
         } else {
             Crop newCropData = cropForm.get();
@@ -133,7 +137,7 @@ public class CropController extends Controller {
         // Run companies db operation and then render the form
         return companyRepository.options().thenApplyAsync((Map<String, String> companies) -> {
             // This is the HTTP rendering thread context
-            return ok(createForm.render(cropForm, companies, request, messagesApi.preferred(request)));
+            return ok(createForm.render(cropForm, companies, request, messagesApi.preferred(request), gtm));
         }, classLoaderExecutionContext.current());
     }
 
@@ -147,7 +151,7 @@ public class CropController extends Controller {
             // Run companies db operation and then render the form
             return companyRepository.options().thenApplyAsync(companies -> {
                 // This is the HTTP rendering thread context
-                return badRequest(createForm.render(cropForm, companies, request, messagesApi.preferred(request)));
+                return badRequest(createForm.render(cropForm, companies, request, messagesApi.preferred(request), gtm));
             }, classLoaderExecutionContext.current());
         }
 

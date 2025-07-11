@@ -14,6 +14,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.FieldRepository;
+import utils.GoogleTagManager;
 import views.html.field.createForm;
 import views.html.field.editForm;
 import views.html.field.list;
@@ -28,16 +29,19 @@ public class FieldController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final GoogleTagManager gtm;
 
     @Inject
     public FieldController(FormFactory formFactory,
                           FieldRepository fieldRepository,
                           ClassLoaderExecutionContext classLoaderExecutionContext,
-                          MessagesApi messagesApi) {
+                          MessagesApi messagesApi,
+                          GoogleTagManager gtm) {
         this.fieldRepository = fieldRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.gtm = gtm;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -64,7 +68,7 @@ public class FieldController extends Controller {
         // Run a db operation in another thread (using DatabaseExecutionContext)
         return fieldRepository.pageByUser(page, 10, sortBy, order, filter, user.getId()).thenApplyAsync(pagedList -> {
             // This is the HTTP rendering thread context
-            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request)));
+            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request), gtm));
         }, classLoaderExecutionContext.current());
     }
 
@@ -84,7 +88,7 @@ public class FieldController extends Controller {
             // This is the HTTP rendering thread context
             Field f = fieldOptional.get();
             Form<Field> fieldForm = formFactory.form(Field.class).fill(f);
-            return ok(editForm.render(id, fieldForm, request, messagesApi.preferred(request)));
+            return ok(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm));
         }, classLoaderExecutionContext.current());
     }
 
@@ -99,7 +103,7 @@ public class FieldController extends Controller {
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(
-                badRequest(editForm.render(id, fieldForm, request, messagesApi.preferred(request)))
+                badRequest(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm))
             );
         } else {
             Field newFieldData = fieldForm.get();
@@ -123,7 +127,7 @@ public class FieldController extends Controller {
         Form<Field> fieldForm = formFactory.form(Field.class);
         // This is the HTTP rendering thread context
         return java.util.concurrent.CompletableFuture.completedFuture(
-            ok(createForm.render(fieldForm, request, messagesApi.preferred(request)))
+            ok(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm))
         );
     }
 
@@ -136,7 +140,7 @@ public class FieldController extends Controller {
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(
-                badRequest(createForm.render(fieldForm, request, messagesApi.preferred(request)))
+                badRequest(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm))
             );
         }
 

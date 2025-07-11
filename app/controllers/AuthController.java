@@ -12,6 +12,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.UserRepository;
+import utils.GoogleTagManager;
 import views.html.auth.login;
 import views.html.auth.register;
 
@@ -28,16 +29,19 @@ public class AuthController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final GoogleTagManager gtm;
 
     @Inject
     public AuthController(UserRepository userRepository,
                          FormFactory formFactory,
                          ClassLoaderExecutionContext classLoaderExecutionContext,
-                         MessagesApi messagesApi) {
+                         MessagesApi messagesApi,
+                         GoogleTagManager gtm) {
         this.userRepository = userRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.gtm = gtm;
     }
 
     /**
@@ -50,7 +54,7 @@ public class AuthController extends Controller {
         }
         
         Form<LoginForm> loginForm = formFactory.form(LoginForm.class);
-        return ok(login.render(loginForm, request, messagesApi.preferred(request)));
+        return ok(login.render(loginForm, request, messagesApi.preferred(request), gtm));
     }
 
     /**
@@ -61,7 +65,7 @@ public class AuthController extends Controller {
         
         if (loginForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                badRequest(login.render(loginForm, request, messagesApi.preferred(request)))
+                badRequest(login.render(loginForm, request, messagesApi.preferred(request), gtm))
             );
         }
 
@@ -80,7 +84,8 @@ public class AuthController extends Controller {
             return badRequest(login.render(
                 loginForm.withError("username", "ユーザー名またはパスワードが間違っています"),
                 request, 
-                messagesApi.preferred(request)
+                messagesApi.preferred(request),
+                gtm
             ));
         }, classLoaderExecutionContext.current());
     }
@@ -95,7 +100,7 @@ public class AuthController extends Controller {
         }
         
         Form<RegisterForm> registerForm = formFactory.form(RegisterForm.class);
-        return ok(register.render(registerForm, request, messagesApi.preferred(request)));
+        return ok(register.render(registerForm, request, messagesApi.preferred(request), gtm));
     }
 
     /**
@@ -106,7 +111,7 @@ public class AuthController extends Controller {
         
         if (registerForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                badRequest(register.render(registerForm, request, messagesApi.preferred(request)))
+                badRequest(register.render(registerForm, request, messagesApi.preferred(request), gtm))
             );
         }
 
@@ -118,7 +123,8 @@ public class AuthController extends Controller {
                 badRequest(register.render(
                     registerForm.withError("confirmPassword", "パスワードが一致しません"),
                     request, 
-                    messagesApi.preferred(request)
+                    messagesApi.preferred(request),
+                    gtm
                 ))
             );
         }
@@ -130,7 +136,8 @@ public class AuthController extends Controller {
                     badRequest(register.render(
                         registerForm.withError("username", "このユーザー名は既に使用されています"),
                         request, 
-                        messagesApi.preferred(request)
+                        messagesApi.preferred(request),
+                        gtm
                     ))
                 );
             }
@@ -141,7 +148,8 @@ public class AuthController extends Controller {
                         badRequest(register.render(
                             registerForm.withError("email", "このメールアドレスは既に使用されています"),
                             request, 
-                            messagesApi.preferred(request)
+                            messagesApi.preferred(request),
+                            gtm
                         ))
                     );
                 }
