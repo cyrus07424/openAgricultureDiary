@@ -1,4 +1,4 @@
-@(content: Html)
+@(content: Html)(implicit gtm: utils.GoogleTagManager)
 
 <!DOCTYPE html>
 <html>
@@ -10,8 +10,10 @@
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("/public", "stylesheets/main.css")"/>
+    @Html(gtm.getHeadScript.toString)
   </head>
   <body>
+    @Html(gtm.getBodyScript.toString)
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <a class="navbar-brand" href="@routes.HomeController.index()">Open Agriculture Diary</a>

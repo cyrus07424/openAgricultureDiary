@@ -3,7 +3,8 @@
     currentOrder: String,
     currentFilter: String)(
     implicit request: Http.Request,
-    messages: play.i18n.Messages)
+    messages: play.i18n.Messages,
+    gtm: utils.GoogleTagManager)
 
 @****************************************
 * Helper generating navigation links    *
