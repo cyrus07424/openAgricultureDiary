@@ -1,4 +1,6 @@
 import org.junit.Test;
+import play.Application;
+import play.inject.guice.GuiceApplicationBuilder;
 import play.test.WithBrowser;
 
 import static io.fluentlenium.core.filter.FilterConstructor.withText;
@@ -6,6 +8,17 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class BrowserTest extends WithBrowser {
+
+    @Override
+    protected Application provideApplication() {
+        return new GuiceApplicationBuilder()
+            .configure("play.evolutions.db.default.enabled", "true")
+            .configure("play.evolutions.db.default.autoApply", "true")
+            .configure("play.filters.hosts.allowed.0", "localhost:19001")
+            .configure("db.default.driver", "org.h2.Driver")
+            .configure("db.default.url", "jdbc:h2:mem:test")
+            .build();
+    }
 
   @Test
   public void testBrowser() {
