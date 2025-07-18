@@ -15,6 +15,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.FieldRepository;
 import utils.GoogleTagManager;
+import utils.LegalLinksConfiguration;
 import views.html.field.createForm;
 import views.html.field.editForm;
 import views.html.field.list;
@@ -30,18 +31,21 @@ public class FieldController extends Controller {
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
     private final GoogleTagManager gtm;
+    private final LegalLinksConfiguration legalLinksConfiguration;
 
     @Inject
     public FieldController(FormFactory formFactory,
                           FieldRepository fieldRepository,
                           ClassLoaderExecutionContext classLoaderExecutionContext,
                           MessagesApi messagesApi,
-                          GoogleTagManager gtm) {
+                          GoogleTagManager gtm,
+                          LegalLinksConfiguration legalLinksConfiguration) {
         this.fieldRepository = fieldRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
         this.gtm = gtm;
+        this.legalLinksConfiguration = legalLinksConfiguration;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -68,7 +72,7 @@ public class FieldController extends Controller {
         // Run a db operation in another thread (using DatabaseExecutionContext)
         return fieldRepository.pageByUser(page, 10, sortBy, order, filter, user.getId()).thenApplyAsync(pagedList -> {
             // This is the HTTP rendering thread context
-            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request), gtm));
+            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
         }, classLoaderExecutionContext.current());
     }
 
@@ -88,7 +92,7 @@ public class FieldController extends Controller {
             // This is the HTTP rendering thread context
             Field f = fieldOptional.get();
             Form<Field> fieldForm = formFactory.form(Field.class).fill(f);
-            return ok(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm));
+            return ok(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
         }, classLoaderExecutionContext.current());
     }
 
@@ -103,7 +107,7 @@ public class FieldController extends Controller {
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(
-                badRequest(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm))
+                badRequest(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
             );
         } else {
             Field newFieldData = fieldForm.get();
@@ -127,7 +131,7 @@ public class FieldController extends Controller {
         Form<Field> fieldForm = formFactory.form(Field.class);
         // This is the HTTP rendering thread context
         return java.util.concurrent.CompletableFuture.completedFuture(
-            ok(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm))
+            ok(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
         );
     }
 
@@ -140,7 +144,7 @@ public class FieldController extends Controller {
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(
-                badRequest(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm))
+                badRequest(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
             );
         }
 

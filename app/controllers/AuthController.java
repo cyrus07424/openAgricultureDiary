@@ -13,6 +13,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.UserRepository;
 import utils.GoogleTagManager;
+import utils.LegalLinksConfiguration;
 import views.html.auth.login;
 import views.html.auth.register;
 
@@ -30,18 +31,21 @@ public class AuthController extends Controller {
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
     private final GoogleTagManager gtm;
+    private final LegalLinksConfiguration legalLinksConfiguration;
 
     @Inject
     public AuthController(UserRepository userRepository,
                          FormFactory formFactory,
                          ClassLoaderExecutionContext classLoaderExecutionContext,
                          MessagesApi messagesApi,
-                         GoogleTagManager gtm) {
+                         GoogleTagManager gtm,
+                         LegalLinksConfiguration legalLinksConfiguration) {
         this.userRepository = userRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
         this.gtm = gtm;
+        this.legalLinksConfiguration = legalLinksConfiguration;
     }
 
     /**
@@ -100,7 +104,7 @@ public class AuthController extends Controller {
         }
         
         Form<RegisterForm> registerForm = formFactory.form(RegisterForm.class);
-        return ok(register.render(registerForm, request, messagesApi.preferred(request), gtm));
+        return ok(register.render(registerForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
     }
 
     /**
@@ -111,11 +115,24 @@ public class AuthController extends Controller {
         
         if (registerForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                badRequest(register.render(registerForm, request, messagesApi.preferred(request), gtm))
+                badRequest(register.render(registerForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
             );
         }
 
         RegisterForm data = registerForm.get();
+        
+        // Check if Terms of Service agreement is required and provided
+        if (legalLinksConfiguration.hasTermsOfServiceUrl() && !data.isAgreeToTerms()) {
+            return CompletableFuture.completedFuture(
+                badRequest(register.render(
+                    registerForm.withError("agreeToTerms", "利用規約に同意してください"),
+                    request, 
+                    messagesApi.preferred(request),
+                    gtm,
+                    legalLinksConfiguration
+                ))
+            );
+        }
         
         // Check if passwords match
         if (!data.passwordsMatch()) {
@@ -124,7 +141,8 @@ public class AuthController extends Controller {
                     registerForm.withError("confirmPassword", "パスワードが一致しません"),
                     request, 
                     messagesApi.preferred(request),
-                    gtm
+                    gtm,
+                    legalLinksConfiguration
                 ))
             );
         }
@@ -137,7 +155,8 @@ public class AuthController extends Controller {
                         registerForm.withError("username", "このユーザー名は既に使用されています"),
                         request, 
                         messagesApi.preferred(request),
-                        gtm
+                        gtm,
+                        legalLinksConfiguration
                     ))
                 );
             }
@@ -149,7 +168,8 @@ public class AuthController extends Controller {
                             registerForm.withError("email", "このメールアドレスは既に使用されています"),
                             request, 
                             messagesApi.preferred(request),
-                            gtm
+                            gtm,
+                            legalLinksConfiguration
                         ))
                     );
                 }

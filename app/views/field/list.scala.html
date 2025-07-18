@@ -4,7 +4,8 @@
     currentFilter: String)(
     implicit request: Http.Request,
     messages: play.i18n.Messages,
-    gtm: utils.GoogleTagManager)
+    gtm: utils.GoogleTagManager,
+    legalLinks: utils.LegalLinksConfiguration)
 
 @****************************************
 * Helper generating navigation links    *

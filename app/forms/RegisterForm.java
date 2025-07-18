@@ -20,6 +20,8 @@ public class RegisterForm {
     @Constraints.Required
     private String confirmPassword;
     
+    private boolean agreeToTerms;
+    
     public RegisterForm() {
     }
     
@@ -57,5 +59,13 @@ public class RegisterForm {
     
     public boolean passwordsMatch() {
         return password != null && password.equals(confirmPassword);
+    }
+    
+    public boolean isAgreeToTerms() {
+        return agreeToTerms;
+    }
+    
+    public void setAgreeToTerms(boolean agreeToTerms) {
+        this.agreeToTerms = agreeToTerms;
     }
 }
