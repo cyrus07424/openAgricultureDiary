@@ -13,6 +13,8 @@ lazy val root = (project in file("."))
       "org.mindrot" % "jbcrypt" % "0.4",
       // Test Database
       "com.h2database" % "h2" % "2.3.232",
+      // PostgreSQL Database
+      "org.postgresql" % "postgresql" % "42.7.3",
       // Bootstrap webjar
       "org.webjars" % "bootstrap" % "5.3.0",
       // Testing libraries for dealing with CompletionStage...
