@@ -19,7 +19,13 @@ public class FieldTest extends WithApplication {
 
     @Override
     protected Application provideApplication() {
-        return new GuiceApplicationBuilder().build();
+        return new GuiceApplicationBuilder()
+            .configure("play.evolutions.db.default.enabled", "true")
+            .configure("play.evolutions.db.default.autoApply", "true")
+            .configure("play.filters.hosts.allowed.0", "localhost:19001")
+            .configure("db.default.driver", "org.h2.Driver")
+            .configure("db.default.url", "jdbc:h2:mem:test")
+            .build();
     }
 
     @Test

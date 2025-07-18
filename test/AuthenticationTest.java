@@ -1,5 +1,7 @@
 import controllers.routes;
 import org.junit.Test;
+import play.Application;
+import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Result;
 import play.test.WithApplication;
 
@@ -11,6 +13,17 @@ import static play.api.test.CSRFTokenHelper.addCSRFToken;
 import static play.test.Helpers.*;
 
 public class AuthenticationTest extends WithApplication {
+
+    @Override
+    protected Application provideApplication() {
+        return new GuiceApplicationBuilder()
+            .configure("play.evolutions.db.default.enabled", "true")
+            .configure("play.evolutions.db.default.autoApply", "true")
+            .configure("play.filters.hosts.allowed.0", "localhost:19001")
+            .configure("db.default.driver", "org.h2.Driver")
+            .configure("db.default.url", "jdbc:h2:mem:test")
+            .build();
+    }
 
     @Test
     public void redirectToLoginWhenAccessingCropsWithoutAuth() {
