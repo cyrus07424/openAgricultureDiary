@@ -58,7 +58,7 @@ public class AuthController extends Controller {
         }
         
         Form<LoginForm> loginForm = formFactory.form(LoginForm.class);
-        return ok(login.render(loginForm, request, messagesApi.preferred(request), gtm));
+        return ok(login.render(loginForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
     }
 
     /**
@@ -69,7 +69,7 @@ public class AuthController extends Controller {
         
         if (loginForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                badRequest(login.render(loginForm, request, messagesApi.preferred(request), gtm))
+                badRequest(login.render(loginForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
             );
         }
 
@@ -89,7 +89,8 @@ public class AuthController extends Controller {
                 loginForm.withError("username", "ユーザー名またはパスワードが間違っています"),
                 request, 
                 messagesApi.preferred(request),
-                gtm
+                gtm,
+                legalLinksConfiguration
             ));
         }, classLoaderExecutionContext.current());
     }
