@@ -1,8 +1,10 @@
-@(registerForm: Form[forms.RegisterForm])(implicit request: Http.Request, messages: play.i18n.Messages, gtm: utils.GoogleTagManager, legalLinks: utils.LegalLinksConfiguration)
-
+@(registerForm: Form[forms.RegisterForm])(implicit request: Http.Request, messages: play.i18n.Messages)
+@import utils.GlobalConfigHelper
 @import helper._
 
 @implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
+
+@defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 @authLayout {
 
@@ -82,4 +84,5 @@
     </div>
   </div>
 
+}
 }

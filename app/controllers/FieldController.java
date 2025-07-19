@@ -2,6 +2,7 @@ package controllers;
 
 import actions.Authenticated;
 import actions.AuthenticatedAction;
+import actions.GlobalConfig;
 import jakarta.persistence.PersistenceException;
 import models.Field;
 import models.User;
@@ -14,8 +15,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.FieldRepository;
-import utils.GoogleTagManager;
-import utils.LegalLinksConfiguration;
+import utils.GlobalConfigHelper;
 import views.html.field.createForm;
 import views.html.field.editForm;
 import views.html.field.list;
@@ -24,28 +24,23 @@ import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
 
 @Authenticated
+@GlobalConfig
 public class FieldController extends Controller {
 
     private final FieldRepository fieldRepository;
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
-    private final GoogleTagManager gtm;
-    private final LegalLinksConfiguration legalLinksConfiguration;
 
     @Inject
     public FieldController(FormFactory formFactory,
                           FieldRepository fieldRepository,
                           ClassLoaderExecutionContext classLoaderExecutionContext,
-                          MessagesApi messagesApi,
-                          GoogleTagManager gtm,
-                          LegalLinksConfiguration legalLinksConfiguration) {
+                          MessagesApi messagesApi) {
         this.fieldRepository = fieldRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
-        this.gtm = gtm;
-        this.legalLinksConfiguration = legalLinksConfiguration;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -72,7 +67,7 @@ public class FieldController extends Controller {
         // Run a db operation in another thread (using DatabaseExecutionContext)
         return fieldRepository.pageByUser(page, 10, sortBy, order, filter, user.getId()).thenApplyAsync(pagedList -> {
             // This is the HTTP rendering thread context
-            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request)));
         }, classLoaderExecutionContext.current());
     }
 
@@ -92,7 +87,7 @@ public class FieldController extends Controller {
             // This is the HTTP rendering thread context
             Field f = fieldOptional.get();
             Form<Field> fieldForm = formFactory.form(Field.class).fill(f);
-            return ok(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+            return ok(editForm.render(id, fieldForm, request, messagesApi.preferred(request)));
         }, classLoaderExecutionContext.current());
     }
 
@@ -107,7 +102,7 @@ public class FieldController extends Controller {
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(
-                badRequest(editForm.render(id, fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
+                badRequest(editForm.render(id, fieldForm, request, messagesApi.preferred(request)))
             );
         } else {
             Field newFieldData = fieldForm.get();
@@ -131,7 +126,7 @@ public class FieldController extends Controller {
         Form<Field> fieldForm = formFactory.form(Field.class);
         // This is the HTTP rendering thread context
         return java.util.concurrent.CompletableFuture.completedFuture(
-            ok(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
+            ok(createForm.render(fieldForm, request, messagesApi.preferred(request)))
         );
     }
 
@@ -144,7 +139,7 @@ public class FieldController extends Controller {
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(
-                badRequest(createForm.render(fieldForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
+                badRequest(createForm.render(fieldForm, request, messagesApi.preferred(request)))
             );
         }
 

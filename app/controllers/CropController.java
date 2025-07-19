@@ -2,6 +2,7 @@ package controllers;
 
 import actions.Authenticated;
 import actions.AuthenticatedAction;
+import actions.GlobalConfig;
 import jakarta.persistence.PersistenceException;
 import models.Crop;
 import models.User;
@@ -15,8 +16,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.CompanyRepository;
 import repositoryies.CropRepository;
-import utils.GoogleTagManager;
-import utils.LegalLinksConfiguration;
+import utils.GlobalConfigHelper;
 import views.html.crop.createForm;
 import views.html.crop.editForm;
 import views.html.crop.list;
@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 @Authenticated
+@GlobalConfig
 public class CropController extends Controller {
 
     private final CropRepository cropRepository;
@@ -33,24 +34,18 @@ public class CropController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
-    private final GoogleTagManager gtm;
-    private final LegalLinksConfiguration legalLinksConfiguration;
 
     @Inject
     public CropController(FormFactory formFactory,
                           CropRepository cropRepository,
                           CompanyRepository companyRepository,
                           ClassLoaderExecutionContext classLoaderExecutionContext,
-                          MessagesApi messagesApi,
-                          GoogleTagManager gtm,
-                          LegalLinksConfiguration legalLinksConfiguration) {
+                          MessagesApi messagesApi) {
         this.cropRepository = cropRepository;
         this.formFactory = formFactory;
         this.companyRepository = companyRepository;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
-        this.gtm = gtm;
-        this.legalLinksConfiguration = legalLinksConfiguration;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -77,7 +72,7 @@ public class CropController extends Controller {
         // Run a db operation in another thread (using DatabaseExecutionContext)
         return cropRepository.pageByUser(page, 10, sortBy, order, filter, user.getId()).thenApplyAsync(pagedList -> {
             // This is the HTTP rendering thread context
-            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+            return ok(list.render(pagedList, sortBy, order, filter, request, messagesApi.preferred(request)));
         }, classLoaderExecutionContext.current());
     }
 
@@ -100,7 +95,7 @@ public class CropController extends Controller {
             // This is the HTTP rendering thread context
             Crop c = cropOptional.get();
             Form<Crop> cropForm = formFactory.form(Crop.class).fill(c);
-            return ok(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+            return ok(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request)));
         }, classLoaderExecutionContext.current());
     }
 
@@ -116,7 +111,7 @@ public class CropController extends Controller {
             // Run companies db operation and then render the failure case
             return companyRepository.options().thenApplyAsync(companies -> {
                 // This is the HTTP rendering thread context
-                return badRequest(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+                return badRequest(editForm.render(id, cropForm, companies, request, messagesApi.preferred(request)));
             }, classLoaderExecutionContext.current());
         } else {
             Crop newCropData = cropForm.get();
@@ -141,7 +136,7 @@ public class CropController extends Controller {
         // Run companies db operation and then render the form
         return companyRepository.options().thenApplyAsync((Map<String, String> companies) -> {
             // This is the HTTP rendering thread context
-            return ok(createForm.render(cropForm, companies, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+            return ok(createForm.render(cropForm, companies, request, messagesApi.preferred(request)));
         }, classLoaderExecutionContext.current());
     }
 
@@ -155,7 +150,7 @@ public class CropController extends Controller {
             // Run companies db operation and then render the form
             return companyRepository.options().thenApplyAsync(companies -> {
                 // This is the HTTP rendering thread context
-                return badRequest(createForm.render(cropForm, companies, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+                return badRequest(createForm.render(cropForm, companies, request, messagesApi.preferred(request)));
             }, classLoaderExecutionContext.current());
         }
 

@@ -1,4 +1,7 @@
-@(content: Html)(implicit gtm: utils.GoogleTagManager, legalLinks: utils.LegalLinksConfiguration)
+@(content: Html)(implicit request: play.mvc.Http.Request)
+@import utils.GlobalConfigHelper
+@defining(GlobalConfigHelper.getGoogleTagManager(request)) { gtm =>
+@defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 <!DOCTYPE html>
 <html>
@@ -43,3 +46,5 @@
     <script src="@routes.Assets.versioned("/META-INF/resources/webjars", "bootstrap/5.3.0/js/bootstrap.bundle.min.js")"></script>
   </body>
 </html>
+}
+}

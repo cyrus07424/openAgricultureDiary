@@ -1,5 +1,7 @@
 package controllers;
 
+import actions.GlobalConfig;
+import actions.GlobalConfigAction;
 import forms.LoginForm;
 import forms.RegisterForm;
 import models.User;
@@ -12,7 +14,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.UserRepository;
-import utils.GoogleTagManager;
+import utils.GlobalConfigHelper;
 import utils.LegalLinksConfiguration;
 import views.html.auth.login;
 import views.html.auth.register;
@@ -24,28 +26,23 @@ import java.util.concurrent.CompletionStage;
 /**
  * This controller handles authentication related actions
  */
+@GlobalConfig
 public class AuthController extends Controller {
 
     private final UserRepository userRepository;
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
-    private final GoogleTagManager gtm;
-    private final LegalLinksConfiguration legalLinksConfiguration;
 
     @Inject
     public AuthController(UserRepository userRepository,
                          FormFactory formFactory,
                          ClassLoaderExecutionContext classLoaderExecutionContext,
-                         MessagesApi messagesApi,
-                         GoogleTagManager gtm,
-                         LegalLinksConfiguration legalLinksConfiguration) {
+                         MessagesApi messagesApi) {
         this.userRepository = userRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
-        this.gtm = gtm;
-        this.legalLinksConfiguration = legalLinksConfiguration;
     }
 
     /**
@@ -58,7 +55,7 @@ public class AuthController extends Controller {
         }
         
         Form<LoginForm> loginForm = formFactory.form(LoginForm.class);
-        return ok(login.render(loginForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+        return ok(login.render(loginForm, request, messagesApi.preferred(request)));
     }
 
     /**
@@ -69,7 +66,7 @@ public class AuthController extends Controller {
         
         if (loginForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                badRequest(login.render(loginForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
+                badRequest(login.render(loginForm, request, messagesApi.preferred(request)))
             );
         }
 
@@ -88,9 +85,7 @@ public class AuthController extends Controller {
             return badRequest(login.render(
                 loginForm.withError("username", "ユーザー名またはパスワードが間違っています"),
                 request, 
-                messagesApi.preferred(request),
-                gtm,
-                legalLinksConfiguration
+                messagesApi.preferred(request)
             ));
         }, classLoaderExecutionContext.current());
     }
@@ -105,7 +100,7 @@ public class AuthController extends Controller {
         }
         
         Form<RegisterForm> registerForm = formFactory.form(RegisterForm.class);
-        return ok(register.render(registerForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration));
+        return ok(register.render(registerForm, request, messagesApi.preferred(request)));
     }
 
     /**
@@ -116,21 +111,20 @@ public class AuthController extends Controller {
         
         if (registerForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                badRequest(register.render(registerForm, request, messagesApi.preferred(request), gtm, legalLinksConfiguration))
+                badRequest(register.render(registerForm, request, messagesApi.preferred(request)))
             );
         }
 
         RegisterForm data = registerForm.get();
         
         // Check if Terms of Service agreement is required and provided
-        if (legalLinksConfiguration.hasTermsOfServiceUrl() && !data.isAgreeToTerms()) {
+        LegalLinksConfiguration legalLinks = request.attrs().get(GlobalConfigAction.LEGAL_LINKS_KEY);
+        if (legalLinks.hasTermsOfServiceUrl() && !data.isAgreeToTerms()) {
             return CompletableFuture.completedFuture(
                 badRequest(register.render(
                     registerForm.withError("agreeToTerms", "利用規約に同意してください"),
                     request, 
-                    messagesApi.preferred(request),
-                    gtm,
-                    legalLinksConfiguration
+                    messagesApi.preferred(request)
                 ))
             );
         }
@@ -141,9 +135,7 @@ public class AuthController extends Controller {
                 badRequest(register.render(
                     registerForm.withError("confirmPassword", "パスワードが一致しません"),
                     request, 
-                    messagesApi.preferred(request),
-                    gtm,
-                    legalLinksConfiguration
+                    messagesApi.preferred(request)
                 ))
             );
         }
@@ -155,9 +147,7 @@ public class AuthController extends Controller {
                     badRequest(register.render(
                         registerForm.withError("username", "このユーザー名は既に使用されています"),
                         request, 
-                        messagesApi.preferred(request),
-                        gtm,
-                        legalLinksConfiguration
+                        messagesApi.preferred(request)
                     ))
                 );
             }
@@ -168,9 +158,7 @@ public class AuthController extends Controller {
                         badRequest(register.render(
                             registerForm.withError("email", "このメールアドレスは既に使用されています"),
                             request, 
-                            messagesApi.preferred(request),
-                            gtm,
-                            legalLinksConfiguration
+                            messagesApi.preferred(request)
                         ))
                     );
                 }
