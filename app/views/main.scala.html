@@ -1,4 +1,7 @@
-@(content: Html)(implicit gtm: utils.GoogleTagManager)
+@(content: Html)(implicit request: play.mvc.Http.Request)
+@import utils.GlobalConfigHelper
+@defining(GlobalConfigHelper.getGoogleTagManager(request)) { gtm =>
+@defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 <!DOCTYPE html>
 <html>
@@ -33,6 +36,25 @@
     @content
     </main>
 
+    @if(legalLinks.hasTermsOfServiceUrl() || legalLinks.hasPrivacyPolicyUrl()) {
+      <footer class="bg-light border-top py-3 mt-5">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12 text-center">
+              @if(legalLinks.hasTermsOfServiceUrl()) {
+                <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank" class="text-muted me-3">利用規約</a>
+              }
+              @if(legalLinks.hasPrivacyPolicyUrl()) {
+                <a href="@legalLinks.getPrivacyPolicyUrl().get()" target="_blank" class="text-muted">プライバシーポリシー</a>
+              }
+            </div>
+          </div>
+        </div>
+      </footer>
+    }
+
     <script src="@routes.Assets.versioned("/META-INF/resources/webjars", "bootstrap/5.3.0/js/bootstrap.bundle.min.js")"></script>
   </body>
 </html>
+}
+}

@@ -1,8 +1,10 @@
-@(registerForm: Form[forms.RegisterForm])(implicit request: Http.Request, messages: play.i18n.Messages, gtm: utils.GoogleTagManager)
-
+@(registerForm: Form[forms.RegisterForm])(implicit request: Http.Request, messages: play.i18n.Messages)
+@import utils.GlobalConfigHelper
 @import helper._
 
 @implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
+
+@defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 @authLayout {
 
@@ -54,6 +56,22 @@
               @inputPassword(registerForm("confirmPassword"), Symbol("_label") -> "パスワード確認", Symbol("class") -> "form-control")
             </div>
             
+            @if(legalLinks.hasTermsOfServiceUrl()) {
+              <div class="form-group mb-3">
+                <div class="form-check">
+                  <input class="form-check-input @if(registerForm("agreeToTerms").hasErrors) {is-invalid}" type="checkbox" value="true" id="agreeToTerms" name="agreeToTerms" @if(registerForm("agreeToTerms").value.orElse("false").equals("true")) {checked}>
+                  <label class="form-check-label" for="agreeToTerms">
+                    <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank">利用規約</a>に同意する
+                  </label>
+                  @if(registerForm("agreeToTerms").hasErrors) {
+                    <div class="invalid-feedback">
+                      @registerForm("agreeToTerms").errors.asScala.map(_.message).mkString(", ")
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+            
             <button type="submit" class="btn btn-primary">登録</button>
           }
           
@@ -66,4 +84,5 @@
     </div>
   </div>
 
+}
 }
