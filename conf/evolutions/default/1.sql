@@ -36,6 +36,8 @@ create table app_user (
   username                      varchar(255),
   email                         varchar(255),
   password                      varchar(255),
+  reset_token                   varchar(255),
+  reset_token_expires           timestamp,
   constraint pk_app_user primary key (id)
 );
 

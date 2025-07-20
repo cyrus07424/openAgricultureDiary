@@ -13,6 +13,10 @@ POST        /login                   controllers.AuthController.login(request: R
 GET         /register                controllers.AuthController.showRegister(request: Request)
 POST        /register                controllers.AuthController.register(request: Request)
 GET         /logout                  controllers.AuthController.logout(request: Request)
+GET         /forgot-password         controllers.AuthController.showForgotPassword(request: Request)
+POST        /forgot-password         controllers.AuthController.forgotPassword(request: Request)
+GET         /reset-password          controllers.AuthController.showResetPassword(request: Request, token: String)
+POST        /reset-password          controllers.AuthController.resetPassword(request: Request)
 
 # An example controller showing a sample home page
 GET         /                        controllers.HomeController.index(request: Request)

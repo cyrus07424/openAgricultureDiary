@@ -48,4 +48,15 @@ public class UserRepository {
     public CompletionStage<Boolean> existsByEmail(String email) {
         return supplyAsync(() -> DB.find(User.class).where().eq("email", email).exists(), executionContext);
     }
+
+    public CompletionStage<Optional<User>> findByResetToken(String resetToken) {
+        return supplyAsync(() -> DB.find(User.class).where().eq("resetToken", resetToken).findOneOrEmpty(), executionContext);
+    }
+
+    public CompletionStage<Void> update(User user) {
+        return supplyAsync(() -> {
+            user.update();
+            return null;
+        }, executionContext);
+    }
 }

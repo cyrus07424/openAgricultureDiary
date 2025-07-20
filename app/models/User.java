@@ -3,10 +3,13 @@ package models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import play.data.validation.Constraints;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * User entity managed by Ebean
@@ -32,6 +35,12 @@ public class User extends BaseModel {
 
     @OneToMany(mappedBy = "user")
     private List<Crop> crops;
+
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expires")
+    private LocalDateTime resetTokenExpires;
 
     public User() {
     }
@@ -76,5 +85,47 @@ public class User extends BaseModel {
 
     public void setCrops(List<Crop> crops) {
         this.crops = crops;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public LocalDateTime getResetTokenExpires() {
+        return resetTokenExpires;
+    }
+
+    public void setResetTokenExpires(LocalDateTime resetTokenExpires) {
+        this.resetTokenExpires = resetTokenExpires;
+    }
+
+    /**
+     * Generate a password reset token that expires in 24 hours
+     */
+    public void generateResetToken() {
+        this.resetToken = UUID.randomUUID().toString();
+        this.resetTokenExpires = LocalDateTime.now().plusHours(24);
+    }
+
+    /**
+     * Clear the reset token
+     */
+    public void clearResetToken() {
+        this.resetToken = null;
+        this.resetTokenExpires = null;
+    }
+
+    /**
+     * Check if the reset token is valid and not expired
+     */
+    public boolean isResetTokenValid(String token) {
+        return this.resetToken != null && 
+               this.resetToken.equals(token) && 
+               this.resetTokenExpires != null && 
+               this.resetTokenExpires.isAfter(LocalDateTime.now());
     }
 }
