@@ -2,8 +2,10 @@ package controllers;
 
 import actions.GlobalConfig;
 import actions.GlobalConfigAction;
+import forms.ForgotPasswordForm;
 import forms.LoginForm;
 import forms.RegisterForm;
+import forms.ResetPasswordForm;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -14,10 +16,13 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.UserRepository;
+import services.EmailService;
 import utils.GlobalConfigHelper;
 import utils.LegalLinksConfiguration;
+import views.html.auth.forgotPassword;
 import views.html.auth.login;
 import views.html.auth.register;
+import views.html.auth.resetPassword;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
@@ -33,16 +38,19 @@ public class AuthController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final EmailService emailService;
 
     @Inject
     public AuthController(UserRepository userRepository,
                          FormFactory formFactory,
                          ClassLoaderExecutionContext classLoaderExecutionContext,
-                         MessagesApi messagesApi) {
+                         MessagesApi messagesApi,
+                         EmailService emailService) {
         this.userRepository = userRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.emailService = emailService;
     }
 
     /**
@@ -165,10 +173,20 @@ public class AuthController extends Controller {
                 
                 // Create new user
                 User user = new User(data.getUsername(), data.getEmail(), data.getPassword());
-                return userRepository.insert(user).thenApplyAsync(userId -> {
-                    return Results.redirect(routes.CropController.list(0, "name", "asc", ""))
-                            .addingToSession(request, "userId", userId.toString())
-                            .flashing("success", "アカウントが作成されました");
+                return userRepository.insert(user).thenComposeAsync(userId -> {
+                    // Send welcome email asynchronously
+                    emailService.sendWelcomeEmail(data.getEmail(), data.getUsername())
+                        .exceptionally(throwable -> {
+                            // Log error but don't fail registration
+                            play.Logger.of(AuthController.class).warn("Failed to send welcome email to: " + data.getEmail(), throwable);
+                            return false;
+                        });
+                    
+                    return CompletableFuture.completedFuture(
+                        Results.redirect(routes.CropController.list(0, "name", "asc", ""))
+                                .addingToSession(request, "userId", userId.toString())
+                                .flashing("success", "アカウントが作成されました")
+                    );
                 }, classLoaderExecutionContext.current());
             }, classLoaderExecutionContext.current());
         }, classLoaderExecutionContext.current());
@@ -181,5 +199,143 @@ public class AuthController extends Controller {
         return Results.redirect(routes.AuthController.showLogin())
                 .removingFromSession(request, "userId")
                 .flashing("success", "ログアウトしました");
+    }
+
+    /**
+     * Display the forgot password form
+     */
+    public Result showForgotPassword(Http.Request request) {
+        Form<ForgotPasswordForm> forgotPasswordForm = formFactory.form(ForgotPasswordForm.class);
+        return ok(forgotPassword.render(forgotPasswordForm, request, messagesApi.preferred(request)));
+    }
+
+    /**
+     * Handle forgot password form submission
+     */
+    public CompletionStage<Result> forgotPassword(Http.Request request) {
+        Form<ForgotPasswordForm> forgotPasswordForm = formFactory.form(ForgotPasswordForm.class).bindFromRequest(request);
+        
+        if (forgotPasswordForm.hasErrors()) {
+            return CompletableFuture.completedFuture(
+                badRequest(forgotPassword.render(forgotPasswordForm, request, messagesApi.preferred(request)))
+            );
+        }
+
+        ForgotPasswordForm data = forgotPasswordForm.get();
+        
+        return userRepository.findByEmail(data.getEmail()).thenComposeAsync(userOptional -> {
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                user.generateResetToken();
+                
+                return userRepository.update(user).thenComposeAsync(v -> {
+                    // Send password reset email
+                    String baseUrl = getBaseUrl(request);
+                    return emailService.sendPasswordResetEmail(user.getEmail(), user.getUsername(), user.getResetToken(), baseUrl)
+                        .thenApplyAsync(emailSent -> {
+                            if (emailSent) {
+                                return Results.redirect(routes.AuthController.showLogin())
+                                        .flashing("success", "パスワードリセットのメールを送信しました。メールをご確認ください。");
+                            } else {
+                                return badRequest(forgotPassword.render(
+                                    forgotPasswordForm.withError("email", "メール送信に失敗しました。しばらく時間をおいて再度お試しください。"),
+                                    request, 
+                                    messagesApi.preferred(request)
+                                ));
+                            }
+                        }, classLoaderExecutionContext.current());
+                }, classLoaderExecutionContext.current());
+            } else {
+                // Don't reveal that email doesn't exist
+                return CompletableFuture.completedFuture(
+                    Results.redirect(routes.AuthController.showLogin())
+                            .flashing("success", "該当するメールアドレスが存在する場合、パスワードリセットのメールを送信しました。")
+                );
+            }
+        }, classLoaderExecutionContext.current());
+    }
+
+    /**
+     * Display the reset password form
+     */
+    public CompletionStage<Result> showResetPassword(Http.Request request, String token) {
+        if (token == null || token.isEmpty()) {
+            return CompletableFuture.completedFuture(
+                Results.redirect(routes.AuthController.showLogin())
+                        .flashing("error", "無効なリセットトークンです。")
+            );
+        }
+        
+        return userRepository.findByResetToken(token).thenApplyAsync(userOptional -> {
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                if (user.isResetTokenValid(token)) {
+                    Form<ResetPasswordForm> resetForm = formFactory.form(ResetPasswordForm.class);
+                    ResetPasswordForm formData = new ResetPasswordForm();
+                    formData.setToken(token);
+                    resetForm = resetForm.fill(formData);
+                    
+                    return ok(resetPassword.render(resetForm, request, messagesApi.preferred(request)));
+                }
+            }
+            
+            return Results.redirect(routes.AuthController.showLogin())
+                    .flashing("error", "無効または期限切れのリセットトークンです。");
+        }, classLoaderExecutionContext.current());
+    }
+
+    /**
+     * Handle reset password form submission
+     */
+    public CompletionStage<Result> resetPassword(Http.Request request) {
+        Form<ResetPasswordForm> resetForm = formFactory.form(ResetPasswordForm.class).bindFromRequest(request);
+        
+        if (resetForm.hasErrors()) {
+            return CompletableFuture.completedFuture(
+                badRequest(resetPassword.render(resetForm, request, messagesApi.preferred(request)))
+            );
+        }
+
+        ResetPasswordForm data = resetForm.get();
+        
+        // Check if passwords match
+        if (!data.passwordsMatch()) {
+            return CompletableFuture.completedFuture(
+                badRequest(resetPassword.render(
+                    resetForm.withError("confirmPassword", "パスワードが一致しません"),
+                    request, 
+                    messagesApi.preferred(request)
+                ))
+            );
+        }
+        
+        return userRepository.findByResetToken(data.getToken()).thenComposeAsync(userOptional -> {
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                if (user.isResetTokenValid(data.getToken())) {
+                    // Update password and clear reset token
+                    user.setPassword(data.getPassword());
+                    user.clearResetToken();
+                    
+                    return userRepository.update(user).thenApplyAsync(v -> {
+                        return Results.redirect(routes.AuthController.showLogin())
+                                .flashing("success", "パスワードが正常に変更されました。新しいパスワードでログインしてください。");
+                    }, classLoaderExecutionContext.current());
+                }
+            }
+            
+            return CompletableFuture.completedFuture(
+                Results.redirect(routes.AuthController.showLogin())
+                        .flashing("error", "無効または期限切れのリセットトークンです。")
+            );
+        }, classLoaderExecutionContext.current());
+    }
+
+    /**
+     * Get base URL from request
+     */
+    private String getBaseUrl(Http.Request request) {
+        String protocol = request.secure() ? "https" : "http";
+        return protocol + "://" + request.host();
     }
 }

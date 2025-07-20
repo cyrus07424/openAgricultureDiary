@@ -17,6 +17,8 @@ lazy val root = (project in file("."))
       "com.h2database" % "h2" % "2.3.232" % Test,
       // Bootstrap webjar
       "org.webjars" % "bootstrap" % "5.3.0",
+      // SendGrid for email
+      "com.sendgrid" % "sendgrid-java" % "4.10.2",
       // Testing libraries for dealing with CompletionStage...
       "org.assertj" % "assertj-core" % "3.26.3" % Test,
       "org.awaitility" % "awaitility" % "4.2.2" % Test,
