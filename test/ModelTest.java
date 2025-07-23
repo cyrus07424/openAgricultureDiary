@@ -57,4 +57,50 @@ public class ModelTest extends WithApplication {
         });
     }
     
+    @Test
+    public void testTimestampsAreSetOnSave() {
+        final CropRepository cropRepository = app.injector().instanceOf(CropRepository.class);
+        
+        // Create a new crop and save it
+        Crop testCrop = new Crop();
+        testCrop.setName("Test Crop for Timestamps");
+        testCrop.save();
+        
+        await().atMost(1, SECONDS).until(() -> {
+            return testCrop.getCreatedAt() != null && testCrop.getUpdatedAt() != null;
+        });
+        
+        // Test that both timestamps are set and are close to now
+        final long nowMillis = System.currentTimeMillis();
+        final long createdAtMillis = testCrop.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+        final long updatedAtMillis = testCrop.getUpdatedAt().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+        
+        // Timestamps should be within 5 seconds of now
+        assert Math.abs(nowMillis - createdAtMillis) < 5000;
+        assert Math.abs(nowMillis - updatedAtMillis) < 5000;
+        
+        // Store original timestamps for update test
+        final java.time.LocalDateTime originalCreatedAt = testCrop.getCreatedAt();
+        final java.time.LocalDateTime originalUpdatedAt = testCrop.getUpdatedAt();
+        
+        // Wait a moment to ensure update timestamp differs
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        // Update the crop
+        testCrop.setName("Updated Test Crop");
+        testCrop.update();
+        
+        await().atMost(1, SECONDS).until(() -> {
+            return testCrop.getUpdatedAt().isAfter(originalUpdatedAt);
+        });
+        
+        // Test that createdAt didn't change but updatedAt did
+        assert testCrop.getCreatedAt().equals(originalCreatedAt);
+        assert testCrop.getUpdatedAt().isAfter(originalUpdatedAt);
+    }
+    
 }
