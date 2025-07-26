@@ -17,6 +17,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.UserRepository;
 import services.EmailService;
+import services.SlackNotificationService;
 import utils.GlobalConfigHelper;
 import utils.LegalLinksConfiguration;
 import views.html.auth.forgotPassword;
@@ -39,18 +40,21 @@ public class AuthController extends Controller {
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
     private final EmailService emailService;
+    private final SlackNotificationService slackNotificationService;
 
     @Inject
     public AuthController(UserRepository userRepository,
                          FormFactory formFactory,
                          ClassLoaderExecutionContext classLoaderExecutionContext,
                          MessagesApi messagesApi,
-                         EmailService emailService) {
+                         EmailService emailService,
+                         SlackNotificationService slackNotificationService) {
         this.userRepository = userRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
         this.emailService = emailService;
+        this.slackNotificationService = slackNotificationService;
     }
 
     /**
@@ -84,6 +88,13 @@ public class AuthController extends Controller {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 if (user.checkPassword(data.getPassword())) {
+                    // Send Slack notification for successful login
+                    slackNotificationService.notifyUserLogin(user, request)
+                        .exceptionally(throwable -> {
+                            play.Logger.of(AuthController.class).warn("Failed to send Slack login notification for user: " + user.getUsername(), throwable);
+                            return false;
+                        });
+                    
                     return Results.redirect(routes.CropController.list(0, "name", "asc", ""))
                             .addingToSession(request, "userId", user.getId().toString())
                             .flashing("success", "ログインしました");
@@ -174,11 +185,21 @@ public class AuthController extends Controller {
                 // Create new user
                 User user = new User(data.getUsername(), data.getEmail(), data.getPassword());
                 return userRepository.insert(user).thenComposeAsync(userId -> {
+                    // Update user ID
+                    user.setId(userId);
+                    
                     // Send welcome email asynchronously
                     emailService.sendWelcomeEmail(data.getEmail(), data.getUsername())
                         .exceptionally(throwable -> {
                             // Log error but don't fail registration
                             play.Logger.of(AuthController.class).warn("Failed to send welcome email to: " + data.getEmail(), throwable);
+                            return false;
+                        });
+                    
+                    // Send Slack notification for user registration
+                    slackNotificationService.notifyUserRegistration(user, request)
+                        .exceptionally(throwable -> {
+                            play.Logger.of(AuthController.class).warn("Failed to send Slack registration notification for user: " + data.getUsername(), throwable);
                             return false;
                         });
                     

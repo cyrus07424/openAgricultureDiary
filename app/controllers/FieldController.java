@@ -15,12 +15,14 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.FieldRepository;
+import services.SlackNotificationService;
 import utils.GlobalConfigHelper;
 import views.html.field.createForm;
 import views.html.field.editForm;
 import views.html.field.list;
 
 import javax.inject.Inject;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @Authenticated
@@ -31,16 +33,19 @@ public class FieldController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final SlackNotificationService slackNotificationService;
 
     @Inject
     public FieldController(FormFactory formFactory,
                           FieldRepository fieldRepository,
                           ClassLoaderExecutionContext classLoaderExecutionContext,
-                          MessagesApi messagesApi) {
+                          MessagesApi messagesApi,
+                          SlackNotificationService slackNotificationService) {
         this.fieldRepository = fieldRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.slackNotificationService = slackNotificationService;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -112,6 +117,14 @@ public class FieldController extends Controller {
                 if (data.isEmpty()) {
                     return notFound("Field not found or you don't have permission to update it");
                 }
+                
+                // Send Slack notification for field update
+                slackNotificationService.notifyDataUpdate("フィールド", newFieldData.getName(), user, request)
+                    .exceptionally(throwable -> {
+                        play.Logger.of(FieldController.class).warn("Failed to send Slack update notification for field: " + newFieldData.getName(), throwable);
+                        return false;
+                    });
+                
                 // This is the HTTP rendering thread context
                 return GO_FIELD_LIST
                         .flashing("success", "Field " + newFieldData.getName() + " has been updated");
@@ -147,6 +160,13 @@ public class FieldController extends Controller {
         field.setUser(user); // Set the current user as the owner
         // Run insert db operation, then redirect
         return fieldRepository.insert(field).thenApplyAsync(data -> {
+            // Send Slack notification for field creation
+            slackNotificationService.notifyDataCreation("フィールド", field.getName(), user, request)
+                .exceptionally(throwable -> {
+                    play.Logger.of(FieldController.class).warn("Failed to send Slack creation notification for field: " + field.getName(), throwable);
+                    return false;
+                });
+            
             // This is the HTTP rendering thread context
             return GO_FIELD_LIST
                     .flashing("success", "Field " + field.getName() + " has been created");
@@ -158,14 +178,32 @@ public class FieldController extends Controller {
      */
     public CompletionStage<Result> delete(Http.Request request, Long id) {
         User user = getCurrentUser(request);
-        // Run delete db operation, then redirect
-        return fieldRepository.deleteByUser(id, user.getId()).thenApplyAsync(success -> {
-            if (!success) {
-                return notFound("Field not found or you don't have permission to delete it");
+        // First lookup the field to get its name for notification
+        return fieldRepository.lookupByUser(id, user.getId()).thenComposeAsync(fieldOptional -> {
+            if (fieldOptional.isEmpty()) {
+                return CompletableFuture.completedFuture(notFound("Field not found or you don't have permission to delete it"));
             }
-            // This is the HTTP rendering thread context
-            return GO_FIELD_LIST
-                    .flashing("success", "Field has been deleted");
+            
+            Field field = fieldOptional.get();
+            String fieldName = field.getName();
+            
+            // Run delete db operation, then redirect
+            return fieldRepository.deleteByUser(id, user.getId()).thenApplyAsync(success -> {
+                if (!success) {
+                    return notFound("Field not found or you don't have permission to delete it");
+                }
+                
+                // Send Slack notification for field deletion
+                slackNotificationService.notifyDataDeletion("フィールド", fieldName, user, request)
+                    .exceptionally(throwable -> {
+                        play.Logger.of(FieldController.class).warn("Failed to send Slack deletion notification for field: " + fieldName, throwable);
+                        return false;
+                    });
+                
+                // This is the HTTP rendering thread context
+                return GO_FIELD_LIST
+                        .flashing("success", "Field has been deleted");
+            }, classLoaderExecutionContext.current());
         }, classLoaderExecutionContext.current());
     }
 }

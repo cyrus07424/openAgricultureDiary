@@ -19,12 +19,14 @@ import play.mvc.Results;
 import repositoryies.WorkHistoryRepository;
 import repositoryies.FieldRepository;
 import repositoryies.CropRepository;
+import services.SlackNotificationService;
 import utils.GlobalConfigHelper;
 import views.html.workHistory.createForm;
 import views.html.workHistory.editForm;
 import views.html.workHistory.list;
 
 import javax.inject.Inject;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.Map;
 
@@ -38,6 +40,7 @@ public class WorkHistoryController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final SlackNotificationService slackNotificationService;
 
     @Inject
     public WorkHistoryController(FormFactory formFactory,
@@ -45,13 +48,15 @@ public class WorkHistoryController extends Controller {
                                 FieldRepository fieldRepository,
                                 CropRepository cropRepository,
                                 ClassLoaderExecutionContext classLoaderExecutionContext,
-                                MessagesApi messagesApi) {
+                                MessagesApi messagesApi,
+                                SlackNotificationService slackNotificationService) {
         this.workHistoryRepository = workHistoryRepository;
         this.fieldRepository = fieldRepository;
         this.cropRepository = cropRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.slackNotificationService = slackNotificationService;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -137,6 +142,14 @@ public class WorkHistoryController extends Controller {
                 if (data.isEmpty()) {
                     return notFound("WorkHistory not found or you don't have permission to update it");
                 }
+                
+                // Send Slack notification for work history update  
+                slackNotificationService.notifyDataUpdate("作業履歴", "ID:" + id, user, request)
+                    .exceptionally(throwable -> {
+                        play.Logger.of(WorkHistoryController.class).warn("Failed to send Slack update notification for work history: " + id, throwable);
+                        return false;
+                    });
+                
                 // This is the HTTP rendering thread context
                 return GO_WORK_HISTORY_LIST
                         .flashing("success", "Work history has been updated");
@@ -185,6 +198,13 @@ public class WorkHistoryController extends Controller {
         workHistory.setUser(user); // Set the current user as the owner
         // Run insert db operation, then redirect
         return workHistoryRepository.insert(workHistory).thenApplyAsync(data -> {
+            // Send Slack notification for work history creation
+            slackNotificationService.notifyDataCreation("作業履歴", workHistory.getContent(), user, request)
+                .exceptionally(throwable -> {
+                    play.Logger.of(WorkHistoryController.class).warn("Failed to send Slack creation notification for work history: " + workHistory.getContent(), throwable);
+                    return false;
+                });
+            
             // This is the HTTP rendering thread context
             return GO_WORK_HISTORY_LIST
                     .flashing("success", "Work history has been created");
@@ -196,14 +216,32 @@ public class WorkHistoryController extends Controller {
      */
     public CompletionStage<Result> delete(Http.Request request, Long id) {
         User user = getCurrentUser(request);
-        // Run delete db operation, then redirect
-        return workHistoryRepository.deleteByUser(id, user.getId()).thenApplyAsync(success -> {
-            if (!success) {
-                return notFound("Work history not found or you don't have permission to delete it");
+        // First lookup the work history to get its content for notification
+        return workHistoryRepository.lookupByUser(id, user.getId()).thenComposeAsync(workHistoryOptional -> {
+            if (workHistoryOptional.isEmpty()) {
+                return CompletableFuture.completedFuture(notFound("Work history not found or you don't have permission to delete it"));
             }
-            // This is the HTTP rendering thread context
-            return GO_WORK_HISTORY_LIST
-                    .flashing("success", "Work history has been deleted");
+            
+            WorkHistory workHistory = workHistoryOptional.get();
+            String workHistoryContent = workHistory.getContent();
+            
+            // Run delete db operation, then redirect
+            return workHistoryRepository.deleteByUser(id, user.getId()).thenApplyAsync(success -> {
+                if (!success) {
+                    return notFound("Work history not found or you don't have permission to delete it");
+                }
+                
+                // Send Slack notification for work history deletion
+                slackNotificationService.notifyDataDeletion("作業履歴", workHistoryContent, user, request)
+                    .exceptionally(throwable -> {
+                        play.Logger.of(WorkHistoryController.class).warn("Failed to send Slack deletion notification for work history: " + workHistoryContent, throwable);
+                        return false;
+                    });
+                
+                // This is the HTTP rendering thread context
+                return GO_WORK_HISTORY_LIST
+                        .flashing("success", "Work history has been deleted");
+            }, classLoaderExecutionContext.current());
         }, classLoaderExecutionContext.current());
     }
 }

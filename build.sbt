@@ -9,6 +9,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       guice,
       jdbc,
+      ws, // Web Service client for HTTP requests
       // Password hashing
       "org.mindrot" % "jbcrypt" % "0.4",
       // PostgreSQL Database
