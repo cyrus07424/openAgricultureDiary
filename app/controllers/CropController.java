@@ -16,6 +16,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.CompanyRepository;
 import repositoryies.CropRepository;
+import services.SlackNotificationService;
 import utils.GlobalConfigHelper;
 import views.html.crop.createForm;
 import views.html.crop.editForm;
@@ -23,6 +24,7 @@ import views.html.crop.list;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @Authenticated
@@ -34,18 +36,21 @@ public class CropController extends Controller {
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final SlackNotificationService slackNotificationService;
 
     @Inject
     public CropController(FormFactory formFactory,
                           CropRepository cropRepository,
                           CompanyRepository companyRepository,
                           ClassLoaderExecutionContext classLoaderExecutionContext,
-                          MessagesApi messagesApi) {
+                          MessagesApi messagesApi,
+                          SlackNotificationService slackNotificationService) {
         this.cropRepository = cropRepository;
         this.formFactory = formFactory;
         this.companyRepository = companyRepository;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.slackNotificationService = slackNotificationService;
     }
 
     private User getCurrentUser(Http.Request request) {
@@ -121,6 +126,14 @@ public class CropController extends Controller {
                 if (data.isEmpty()) {
                     return notFound("Crop not found or you don't have permission to update it");
                 }
+                
+                // Send Slack notification for crop update
+                slackNotificationService.notifyDataUpdate("作物", newCropData.getName(), user, request)
+                    .exceptionally(throwable -> {
+                        play.Logger.of(CropController.class).warn("Failed to send Slack update notification for crop: " + newCropData.getName(), throwable);
+                        return false;
+                    });
+                
                 // This is the HTTP rendering thread context
                 return GO_CROP_LIST
                         .flashing("success", "Crop " + newCropData.getName() + " has been updated");
@@ -158,6 +171,13 @@ public class CropController extends Controller {
         crop.setUser(user); // Set the current user as the owner
         // Run insert db operation, then redirect
         return cropRepository.insert(crop).thenApplyAsync(data -> {
+            // Send Slack notification for crop creation
+            slackNotificationService.notifyDataCreation("作物", crop.getName(), user, request)
+                .exceptionally(throwable -> {
+                    play.Logger.of(CropController.class).warn("Failed to send Slack creation notification for crop: " + crop.getName(), throwable);
+                    return false;
+                });
+            
             // This is the HTTP rendering thread context
             return GO_CROP_LIST
                     .flashing("success", "Crop " + crop.getName() + " has been created");
@@ -169,14 +189,32 @@ public class CropController extends Controller {
      */
     public CompletionStage<Result> delete(Http.Request request, Long id) {
         User user = getCurrentUser(request);
-        // Run delete db operation, then redirect
-        return cropRepository.deleteByUser(id, user.getId()).thenApplyAsync(success -> {
-            if (!success) {
-                return notFound("Crop not found or you don't have permission to delete it");
+        // First lookup the crop to get its name for notification
+        return cropRepository.lookupByUser(id, user.getId()).thenComposeAsync(cropOptional -> {
+            if (cropOptional.isEmpty()) {
+                return CompletableFuture.completedFuture(notFound("Crop not found or you don't have permission to delete it"));
             }
-            // This is the HTTP rendering thread context
-            return GO_CROP_LIST
-                    .flashing("success", "Crop has been deleted");
+            
+            Crop crop = cropOptional.get();
+            String cropName = crop.getName();
+            
+            // Run delete db operation, then redirect
+            return cropRepository.deleteByUser(id, user.getId()).thenApplyAsync(success -> {
+                if (!success) {
+                    return notFound("Crop not found or you don't have permission to delete it");
+                }
+                
+                // Send Slack notification for crop deletion
+                slackNotificationService.notifyDataDeletion("作物", cropName, user, request)
+                    .exceptionally(throwable -> {
+                        play.Logger.of(CropController.class).warn("Failed to send Slack deletion notification for crop: " + cropName, throwable);
+                        return false;
+                    });
+                
+                // This is the HTTP rendering thread context
+                return GO_CROP_LIST
+                        .flashing("success", "Crop has been deleted");
+            }, classLoaderExecutionContext.current());
         }, classLoaderExecutionContext.current());
     }
 }
