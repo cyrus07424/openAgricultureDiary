@@ -178,7 +178,39 @@ public class PesticideController extends Controller {
                 }
                 
                 String[] fields = line.split(",", -1);
-                if (fields.length >= 10) {
+                if (fields.length >= 25) {  // Updated to expect 25 fields instead of 10
+                    PesticideRegistration pesticide = new PesticideRegistration();
+                    pesticide.setRegistrationNumber(cleanField(fields[0]));
+                    pesticide.setUsage(cleanField(fields[1]));
+                    pesticide.setPesticideType(cleanField(fields[2]));
+                    pesticide.setPesticideName(cleanField(fields[3]));
+                    pesticide.setAbbreviation(cleanField(fields[4]));
+                    pesticide.setCropName(cleanField(fields[5]));
+                    pesticide.setApplicationLocation(cleanField(fields[6]));
+                    pesticide.setTargetPestDisease(cleanField(fields[7]));
+                    pesticide.setPurpose(cleanField(fields[8]));
+                    pesticide.setDilutionAmount(cleanField(fields[9]));
+                    
+                    // Additional fields
+                    pesticide.setSprayVolume(cleanField(fields[10]));
+                    pesticide.setUsageTime(cleanField(fields[11]));
+                    pesticide.setMainAgentUsageCount(cleanField(fields[12]));
+                    pesticide.setUsageMethod(cleanField(fields[13]));
+                    pesticide.setFumigationTime(cleanField(fields[14]));
+                    pesticide.setFumigationTemperature(cleanField(fields[15]));
+                    pesticide.setApplicableSoil(cleanField(fields[16]));
+                    pesticide.setApplicableZoneName(cleanField(fields[17]));
+                    pesticide.setApplicablePesticideName(cleanField(fields[18]));
+                    pesticide.setMixtureCount(cleanField(fields[19]));
+                    pesticide.setActiveIngredient1TotalUsage(cleanField(fields[20]));
+                    pesticide.setActiveIngredient2TotalUsage(cleanField(fields[21]));
+                    pesticide.setActiveIngredient3TotalUsage(cleanField(fields[22]));
+                    pesticide.setActiveIngredient4TotalUsage(cleanField(fields[23]));
+                    pesticide.setActiveIngredient5TotalUsage(cleanField(fields[24]));
+                    
+                    pesticides.add(pesticide);
+                } else if (fields.length >= 10) {
+                    // Backward compatibility: handle files with only the original 10 fields
                     PesticideRegistration pesticide = new PesticideRegistration();
                     pesticide.setRegistrationNumber(cleanField(fields[0]));
                     pesticide.setUsage(cleanField(fields[1]));

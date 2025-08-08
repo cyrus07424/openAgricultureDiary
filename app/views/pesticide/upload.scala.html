@@ -89,17 +89,14 @@
         <div class="card-body">
           <p>アップロードされたZIPファイルのCSVデータから以下の項目が取り込まれます：</p>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
+              <h6>基本情報</h6>
               <ul>
                 <li>登録番号</li>
                 <li>用途</li>
                 <li>農薬の種類</li>
                 <li>農薬の名称</li>
                 <li>略称</li>
-              </ul>
-            </div>
-            <div class="col-md-6">
-              <ul>
                 <li>作物名</li>
                 <li>適用場所</li>
                 <li>適用病害虫雑草名</li>
@@ -107,6 +104,34 @@
                 <li>希釈倍数使用量</li>
               </ul>
             </div>
+            <div class="col-md-4">
+              <h6>使用条件</h6>
+              <ul>
+                <li>散布液量</li>
+                <li>使用時期</li>
+                <li>本剤の使用回数</li>
+                <li>使用方法</li>
+                <li>くん蒸時間</li>
+                <li>くん蒸温度</li>
+                <li>適用土壌</li>
+                <li>適用地帯名</li>
+                <li>適用農薬名</li>
+                <li>混合数</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h6>有効成分使用回数</h6>
+              <ul>
+                <li>有効成分①を含む農薬の総使用回数</li>
+                <li>有効成分②を含む農薬の総使用回数</li>
+                <li>有効成分③を含む農薬の総使用回数</li>
+                <li>有効成分④を含む農薬の総使用回数</li>
+                <li>有効成分⑤を含む農薬の総使用回数</li>
+              </ul>
+            </div>
+          </div>
+          <div class="alert alert-warning mt-3" role="alert">
+            <small><strong>注意:</strong> CSVファイルに全25項目が含まれていない場合は、旧形式（10項目）として処理されます。</small>
           </div>
         </div>
       </div>

@@ -98,12 +98,12 @@
             @header("usage", "用途")
             @header("pesticideType", "農薬の種類")
             @header("pesticideName", "農薬の名称")
-            @header("abbreviation", "略称")
             @header("cropName", "作物名")
-            @header("applicationLocation", "適用場所")
-            @header("targetPestDisease", "適用病害虫雑草名")
-            @header("purpose", "使用目的")
-            @header("dilutionAmount", "希釈倍数使用量")
+            @header("sprayVolume", "散布液量")
+            @header("usageTime", "使用時期")
+            @header("mainAgentUsageCount", "本剤の使用回数")
+            @header("usageMethod", "使用方法")
+            <th scope="col">詳細</th>
           </tr>
         </thead>
         <tbody>
@@ -114,13 +114,74 @@
             <td>@pesticide.getUsage()</td>
             <td>@pesticide.getPesticideType()</td>
             <td>@pesticide.getPesticideName()</td>
-            <td>@pesticide.getAbbreviation()</td>
             <td>@pesticide.getCropName()</td>
-            <td>@pesticide.getApplicationLocation()</td>
-            <td>@pesticide.getTargetPestDisease()</td>
-            <td>@pesticide.getPurpose()</td>
-            <td>@pesticide.getDilutionAmount()</td>
+            <td>@pesticide.getSprayVolume()</td>
+            <td>@pesticide.getUsageTime()</td>
+            <td>@pesticide.getMainAgentUsageCount()</td>
+            <td>@pesticide.getUsageMethod()</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#detailModal@pesticide.getId()">
+                詳細
+              </button>
+            </td>
           </tr>
+          
+          <!-- Detail Modal -->
+          <div class="modal fade" id="detailModal@pesticide.getId()" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel@pesticide.getId()" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="detailModalLabel@pesticide.getId()">農薬登録詳細: @pesticide.getPesticideName()</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6>基本情報</h6>
+                      <p><strong>登録番号:</strong> @pesticide.getRegistrationNumber()</p>
+                      <p><strong>用途:</strong> @pesticide.getUsage()</p>
+                      <p><strong>農薬の種類:</strong> @pesticide.getPesticideType()</p>
+                      <p><strong>農薬の名称:</strong> @pesticide.getPesticideName()</p>
+                      <p><strong>略称:</strong> @pesticide.getAbbreviation()</p>
+                      <p><strong>作物名:</strong> @pesticide.getCropName()</p>
+                      <p><strong>適用場所:</strong> @pesticide.getApplicationLocation()</p>
+                      <p><strong>適用病害虫雑草名:</strong> @pesticide.getTargetPestDisease()</p>
+                      <p><strong>使用目的:</strong> @pesticide.getPurpose()</p>
+                      <p><strong>希釈倍数使用量:</strong> @pesticide.getDilutionAmount()</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>使用条件</h6>
+                      <p><strong>散布液量:</strong> @pesticide.getSprayVolume()</p>
+                      <p><strong>使用時期:</strong> @pesticide.getUsageTime()</p>
+                      <p><strong>本剤の使用回数:</strong> @pesticide.getMainAgentUsageCount()</p>
+                      <p><strong>使用方法:</strong> @pesticide.getUsageMethod()</p>
+                      <p><strong>くん蒸時間:</strong> @pesticide.getFumigationTime()</p>
+                      <p><strong>くん蒸温度:</strong> @pesticide.getFumigationTemperature()</p>
+                      <p><strong>適用土壌:</strong> @pesticide.getApplicableSoil()</p>
+                      <p><strong>適用地帯名:</strong> @pesticide.getApplicableZoneName()</p>
+                      <p><strong>適用農薬名:</strong> @pesticide.getApplicablePesticideName()</p>
+                      <p><strong>混合数:</strong> @pesticide.getMixtureCount()</p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <h6>有効成分の総使用回数</h6>
+                      <p><strong>有効成分①:</strong> @pesticide.getActiveIngredient1TotalUsage()</p>
+                      <p><strong>有効成分②:</strong> @pesticide.getActiveIngredient2TotalUsage()</p>
+                      <p><strong>有効成分③:</strong> @pesticide.getActiveIngredient3TotalUsage()</p>
+                      <p><strong>有効成分④:</strong> @pesticide.getActiveIngredient4TotalUsage()</p>
+                      <p><strong>有効成分⑤:</strong> @pesticide.getActiveIngredient5TotalUsage()</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                </div>
+              </div>
+            </div>
+          </div>
         }
 
         </tbody>
