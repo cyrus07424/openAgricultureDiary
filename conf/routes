@@ -66,3 +66,9 @@ POST        /work-history/:id        controllers.WorkHistoryController.update(re
 
 # Delete a work history
 POST        /work-history/:id/delete controllers.WorkHistoryController.delete(request: Request, id:Long)
+
+# Pesticide registration management (admin only)
+GET         /pesticides              controllers.PesticideController.list(request: Request, p:Int ?= 0, s ?= "registrationNumber", o ?= "asc", f ?= "")
+GET         /pesticides/upload       controllers.PesticideController.showUpload(request: Request)
+POST        /pesticides/upload       controllers.PesticideController.upload(request: Request)
+POST        /pesticides/clear        controllers.PesticideController.clear(request: Request)
