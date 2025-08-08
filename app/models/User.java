@@ -42,6 +42,9 @@ public class User extends BaseModel {
     @Column(name = "reset_token_expires")
     private LocalDateTime resetTokenExpires;
 
+    @Column(name = "is_admin")
+    private Boolean isAdmin = false;
+
     public User() {
     }
 
@@ -127,5 +130,20 @@ public class User extends BaseModel {
                this.resetToken.equals(token) && 
                this.resetTokenExpires != null && 
                this.resetTokenExpires.isAfter(LocalDateTime.now());
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin != null ? isAdmin : false;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public boolean isAdmin() {
+        return getIsAdmin();
     }
 }

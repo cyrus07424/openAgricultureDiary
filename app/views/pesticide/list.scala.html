@@ -1,0 +1,157 @@
+@(currentPage: io.ebean.PagedList[PesticideRegistration],
+    currentSortBy: String,
+    currentOrder: String,
+    currentFilter: String)(
+    implicit request: Http.Request,
+    messages: play.i18n.Messages)
+@import utils.GlobalConfigHelper
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+
+  var sortBy = currentSortBy
+  var order = currentOrder
+
+  if(newSortBy != null) {
+    sortBy = newSortBy
+    if(currentSortBy == newSortBy) {
+      if(currentOrder == "asc") {
+        order = "desc"
+      } else {
+        order = "asc"
+      }
+    } else {
+      order = "asc"
+    }
+  }
+
+  // Generate the link
+  routes.PesticideController.list(newPage, sortBy, order, currentFilter)
+
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+  <th scope="col" class="@key.replace(".","_")">
+    <a class="sort-link @if(currentSortBy != key) { sort-link-inactive }" href="@link(0, key)">@title @sortIcon(key)</a>
+  </th>
+}
+
+@sortIcon(key:String) = {
+@if(currentOrder == "asc") {
+  <i class="fa fa-fw fa-caret-down"></i>
+} else {
+  <i class="fa fa-fw fa-caret-up"></i>
+}
+}
+
+@main {
+
+  <h1 class="my-3" id="page-title">農薬登録情報管理 (@currentPage.getTotalCount 件)</h1>
+
+  @request.flash.asScala().get("success").map { successFlashValue =>
+    <div class="alert alert-success" role="alert">
+      <strong>完了!</strong> @successFlashValue
+    </div>
+  }
+
+  <div class="row">
+    <div class="col-sm-4">
+      <form class="form-inline" action="@link(0, "registrationNumber")" method="GET">
+        <div class="form-group mr-sm-2 mb-2">
+          <label for="searchbox" class="sr-only">検索...</label>
+          <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="登録番号、農薬名、作物名で検索...">
+        </div>
+        <button type="submit" id="searchsubmit" class="btn btn-primary mb-2">検索</button>
+      </form>
+    </div>
+    <div class="col-sm-8">
+      <div class="float-right">
+        <a href="@routes.PesticideController.showUpload()" id="upload" class="btn btn-success mr-2" role="button">ZIPファイルアップロード</a>
+        @if(currentPage.getTotalCount > 0) {
+          <form method="POST" action="@routes.PesticideController.clear()" style="display: inline;" 
+                onsubmit="return confirm('全ての農薬登録情報を削除してもよろしいですか？');">
+            <button type="submit" class="btn btn-danger">全削除</button>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if(currentPage.getTotalCount == 0) {
+
+    <div class="card card-body bg-light">
+      <em>農薬登録情報がありません。ZIPファイルをアップロードしてデータを追加してください。</em>
+    </div>
+
+  } else {
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped table-hover table-sm">
+        <thead class="thead-light">
+          <tr>
+            @header("registrationNumber", "登録番号")
+            @header("usage", "用途")
+            @header("pesticideType", "農薬の種類")
+            @header("pesticideName", "農薬の名称")
+            @header("abbreviation", "略称")
+            @header("cropName", "作物名")
+            @header("applicationLocation", "適用場所")
+            @header("targetPestDisease", "適用病害虫雑草名")
+            @header("purpose", "使用目的")
+            @header("dilutionAmount", "希釈倍数使用量")
+          </tr>
+        </thead>
+        <tbody>
+
+        @for(pesticide <- currentPage.getList.asScala) {
+          <tr>
+            <td>@pesticide.getRegistrationNumber()</td>
+            <td>@pesticide.getUsage()</td>
+            <td>@pesticide.getPesticideType()</td>
+            <td>@pesticide.getPesticideName()</td>
+            <td>@pesticide.getAbbreviation()</td>
+            <td>@pesticide.getCropName()</td>
+            <td>@pesticide.getApplicationLocation()</td>
+            <td>@pesticide.getTargetPestDisease()</td>
+            <td>@pesticide.getPurpose()</td>
+            <td>@pesticide.getDilutionAmount()</td>
+          </tr>
+        }
+
+        </tbody>
+      </table>
+    </div>
+
+    <nav aria-label="...">
+      <ul class="pagination float-right">
+        @if(currentPage.hasPrev) {
+          <li class="page-item previous">
+            <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)">&larr; 前へ</a>
+          </li>
+        } else {
+          <li class="page-item previous disabled">
+            <a class="page-link">&larr; 前へ</a>
+          </li>
+        }
+        <li class="page-item disabled" aria-current="page">
+          <a class="page-link" href="#">@currentPage.getDisplayXtoYofZ(" - "," / ")</a>
+        </li>
+        @if(currentPage.hasNext) {
+          <li class="page-item next">
+            <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)">次へ &rarr;</a>
+          </li>
+        } else {
+          <li class="page-item next disabled">
+            <a class="page-link" >次へ &rarr;</a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+  }
+}

@@ -1,0 +1,116 @@
+@(uploadForm: Form[forms.PesticideUploadForm])(implicit request: Http.Request, messages: play.i18n.Messages)
+@import utils.GlobalConfigHelper
+@import helper._
+
+@implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
+
+@main {
+
+  <h1 class="my-3" id="page-title">農薬登録情報アップロード</h1>
+
+  @request.flash.asScala().get("success").map { successFlashValue =>
+    <div class="alert alert-success" role="alert">
+      @successFlashValue
+    </div>
+  }
+
+  @request.flash.asScala().get("error").map { errorFlashValue =>
+    <div class="alert alert-danger" role="alert">
+      @errorFlashValue
+    </div>
+  }
+
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>ZIPファイルアップロード</h3>
+        </div>
+        <div class="card-body">
+          
+          <div class="alert alert-info" role="alert">
+            <h5>アップロード可能なファイル</h5>
+            <p>
+              農薬登録情報ダウンロードサイトからダウンロードできる下記のファイルをアップロードしてください：
+            </p>
+            <ul>
+              <li><strong>登録適用部一.zip</strong> - <a href="https://www.acis.famic.go.jp/ddata/data/%E7%99%BB%E9%8C%B2%E9%81%A9%E7%94%A8%E9%83%A8%E4%B8%80.zip" target="_blank">ダウンロード</a></li>
+              <li><strong>登録適用部二.zip</strong> - <a href="https://www.acis.famic.go.jp/ddata/data/%E7%99%BB%E9%8C%B2%E9%81%A9%E7%94%A8%E9%83%A8%E4%BA%8C.zip" target="_blank">ダウンロード</a></li>
+            </ul>
+            <p class="mb-0">
+              <small>※ ファイルは農薬登録情報管理機能（<a href="https://www.acis.famic.go.jp/ddata/index.htm" target="_blank">https://www.acis.famic.go.jp/ddata/index.htm</a>）から取得してください。</small>
+            </p>
+          </div>
+          
+          @form(action = routes.PesticideController.upload(), Symbol("enctype") -> "multipart/form-data") {
+            
+            @if(uploadForm.hasGlobalErrors) {
+              <div class="alert alert-danger">
+                @for(error <- uploadForm.globalErrors) {
+                  @error.message
+                }
+              </div>
+            }
+            
+            @CSRF.formField
+            
+            <div class="form-group mb-3">
+              <label for="file">ZIPファイル</label>
+              <input type="file" 
+                     id="file" 
+                     name="file" 
+                     class="form-control @if(uploadForm("file").hasErrors) { is-invalid }" 
+                     accept=".zip" 
+                     required>
+              @if(uploadForm("file").hasErrors) {
+                <div class="invalid-feedback">
+                  @uploadForm("file").errors.map(_.message).mkString(", ")
+                </div>
+              }
+            </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">アップロード</button>
+              <a href="@routes.PesticideController.list(0, "registrationNumber", "asc", "")" class="btn btn-secondary ml-2">キャンセル</a>
+            </div>
+            
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header">
+          <h5>取り込まれるデータ項目</h5>
+        </div>
+        <div class="card-body">
+          <p>アップロードされたZIPファイルのCSVデータから以下の項目が取り込まれます：</p>
+          <div class="row">
+            <div class="col-md-6">
+              <ul>
+                <li>登録番号</li>
+                <li>用途</li>
+                <li>農薬の種類</li>
+                <li>農薬の名称</li>
+                <li>略称</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul>
+                <li>作物名</li>
+                <li>適用場所</li>
+                <li>適用病害虫雑草名</li>
+                <li>使用目的</li>
+                <li>希釈倍数使用量</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+}
