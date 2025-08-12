@@ -1,6 +1,6 @@
 # Email Functionality Implementation
 
-This document describes the email functionality that has been implemented for user registration and password reset using SendGrid.
+This document describes the email functionality that has been implemented for user registration and password reset using SMTP.
 
 ## Features Implemented
 
@@ -20,9 +20,14 @@ This document describes the email functionality that has been implemented for us
 The EmailService requires the following environment variables:
 
 ```bash
-SENDGRID_API_KEY=your_sendgrid_api_key
-SENDGRID_FROM_EMAIL=your_sender_email@example.com
-SENDGRID_FROM_NAME=Open Agriculture Diary (optional)
+SMTP_HOST=smtp.gmail.com                    # Your SMTP server host
+SMTP_PORT=587                               # Your SMTP server port
+SMTP_USER=your_email@example.com           # SMTP username
+SMTP_PASSWORD=your_password_or_app_password # SMTP password or app password
+SMTP_FROM_EMAIL=your_email@example.com     # From email address
+SMTP_FROM_NAME=Open Agriculture Diary      # From name (optional)
+SMTP_TLS=true                              # Enable TLS (optional, defaults to true)
+SMTP_SSL=false                             # Enable SSL (optional, defaults to false)
 ```
 
 ## Database Changes
@@ -50,7 +55,7 @@ POST  /reset-password     - Handle password reset submission
 - `ResetPasswordForm.java` - Form for setting new password
 
 ### Services
-- `EmailService.java` - SendGrid integration service
+- `EmailService.java` - SMTP integration service using play-mailer
 
 ### Views
 - `forgotPassword.scala.html` - Forgot password form
@@ -65,8 +70,8 @@ POST  /reset-password     - Handle password reset submission
 
 ## Usage
 
-1. Set up SendGrid account and get API key
-2. Configure environment variables
+1. Set up your SMTP server (Gmail, Outlook, or any SMTP provider)
+2. Configure environment variables with your SMTP credentials
 3. Users can register and receive welcome emails
 4. Users can reset passwords via email when needed
 

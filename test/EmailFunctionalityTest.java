@@ -19,8 +19,8 @@ public class EmailFunctionalityTest extends WithApplication {
             .configure("db.default.driver", "org.h2.Driver")
             .configure("db.default.url", "jdbc:h2:mem:test")
             // Disable email sending for tests
-            .configure("sendgrid.api.key", "")
-            .configure("sendgrid.from.email", "test@example.com")
+            .configure("play.mailer.mock", "true")
+            .configure("smtp.from.email", "test@example.com")
             .build();
     }
 
