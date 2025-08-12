@@ -51,6 +51,21 @@ create table pesticide_registration (
   target_pest_disease           varchar(255),
   purpose                       varchar(255),
   dilution_amount               varchar(255),
+  spray_volume                  varchar(255),
+  usage_time                    varchar(255),
+  main_agent_usage_count        varchar(255),
+  usage_method                  varchar(255),
+  fumigation_time               varchar(255),
+  fumigation_temperature        varchar(255),
+  applicable_soil               varchar(255),
+  applicable_zone_name          varchar(255),
+  applicable_pesticide_name     varchar(255),
+  mixture_count                 varchar(255),
+  active_ingredient_1_total_usage varchar(255),
+  active_ingredient_2_total_usage varchar(255),
+  active_ingredient_3_total_usage varchar(255),
+  active_ingredient_4_total_usage varchar(255),
+  active_ingredient_5_total_usage varchar(255),
   constraint pk_pesticide_registration primary key (id)
 );
 
