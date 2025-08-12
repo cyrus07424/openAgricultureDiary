@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/open-agriculture-diary -Dhttp.port=${PORT} -XX:+UseContainerSupport

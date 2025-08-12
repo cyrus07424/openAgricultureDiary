@@ -14,13 +14,12 @@ lazy val root = (project in file("."))
       "org.mindrot" % "jbcrypt" % "0.4",
       // PostgreSQL Database
       "org.postgresql" % "postgresql" % "42.7.3",
-      // H2 Database (for testing only)
-      "com.h2database" % "h2" % "2.3.232" % Test,
       // Bootstrap webjar
       "org.webjars" % "bootstrap" % "5.3.0",
       // SendGrid for email
       "com.sendgrid" % "sendgrid-java" % "4.10.2",
       // Testing libraries for dealing with CompletionStage...
+      "com.h2database" % "h2" % "2.3.232" % Test,
       "org.assertj" % "assertj-core" % "3.26.3" % Test,
       "org.awaitility" % "awaitility" % "4.2.2" % Test,
       "org.mockito" % "mockito-core" % "5.8.0" % Test,
