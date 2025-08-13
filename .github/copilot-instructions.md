@@ -15,10 +15,7 @@ Always reference these instructions first and fallback to search or bash command
 ### Environment Variables (Optional Features)
 ```bash
 # Database (Required for production-like operation)
-export DATABASE_URL_DRIVER="org.postgresql.Driver"
-export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary"
-export DATABASE_URL_USERNAME="postgres"
-export DATABASE_URL_PASSWORD="your_password"
+export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary?user=postgres&password=your_password"
 
 # Email functionality (Optional - SMTP)
 export SMTP_HOST="smtp.gmail.com"
@@ -51,10 +48,7 @@ sudo -u postgres createdb open_agriculture_diary
 sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'password';"
 
 # 2. Set required environment variables
-export DATABASE_URL_DRIVER="org.postgresql.Driver"
-export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary"
-export DATABASE_URL_USERNAME="postgres"
-export DATABASE_URL_PASSWORD="password"
+export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary?user=postgres&password=password"
 
 # 3. Build the application
 sbt compile  # Clean: ~15-23s, Incremental: ~1-5s. NEVER CANCEL. Set timeout to 60+ minutes.
@@ -74,6 +68,8 @@ sbt stage    # Takes ~9-14 seconds. NEVER CANCEL. Set timeout to 60+ minutes.
 sbt run      # Starts on http://localhost:9000. NEVER CANCEL.
 
 # Production mode (after sbt stage)
+export PLAY_HTTP_SECRET_KEY="your-secret-key-for-production"  # Required for production
+export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary?user=postgres&password=password"
 ./target/universal/stage/bin/open-agriculture-diary
 ```
 
@@ -93,10 +89,7 @@ ALWAYS test these scenarios after making changes to ensure functionality:
 After making changes, run this complete validation:
 ```bash
 # 1. Start application with database
-export DATABASE_URL_DRIVER="org.postgresql.Driver"
-export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary"  
-export DATABASE_URL_USERNAME="postgres"
-export DATABASE_URL_PASSWORD="password"
+export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary?user=postgres&password=password"
 sbt run
 
 # 2. In another terminal, test key endpoints:
@@ -169,7 +162,8 @@ test/                  # JUnit test files
 1. **Database Connection Timeouts**: 
    - Ensure PostgreSQL is running: `sudo service postgresql start`
    - Verify database exists: `sudo -u postgres psql -l | grep open_agriculture_diary`
-   - Check environment variables are set correctly
+   - Use correct DATABASE_URL format: `jdbc:postgresql://localhost:5432/open_agriculture_diary?user=postgres&password=password`
+   - **CRITICAL**: Do not use separate DATABASE_URL_DRIVER, DATABASE_URL_USERNAME, DATABASE_URL_PASSWORD variables
 
 2. **Test Failures (Host Filtering)**:
    - Some functional tests expect different host headers and fail with "expected 200, got 400"
@@ -188,6 +182,11 @@ test/                  # JUnit test files
    - Normal behavior when environment variables not set
    - Check logs for "Email functionality will be disabled" warnings
    - Application works fully without these optional features
+
+5. **Production Build Security Error**:
+   - Production mode requires PLAY_HTTP_SECRET_KEY environment variable
+   - Error: "The application secret has not been set, and we are in prod mode"
+   - Set a secure random key: `export PLAY_HTTP_SECRET_KEY="your-64-character-random-string"`
 
 ### Expected Logs and Warnings
 When running the application, these log messages are NORMAL and expected:
