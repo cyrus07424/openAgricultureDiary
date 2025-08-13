@@ -37,6 +37,22 @@
     @content
     </main>
 
+    <!-- Loading Modal -->
+    <div class="modal fade loading-modal" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="d-flex flex-column align-items-center">
+              <div class="spinner-border text-primary loading-spinner" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div id="loadingMessage" class="loading-message">処理中です...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     @if(legalLinks.hasTermsOfServiceUrl() || legalLinks.hasPrivacyPolicyUrl()) {
       <footer class="bg-light border-top py-3 mt-5">
         <div class="container-fluid">
@@ -55,6 +71,7 @@
     }
 
     <script src="@routes.Assets.versioned("/META-INF/resources/webjars", "bootstrap/5.3.0/js/bootstrap.bundle.min.js")"></script>
+    <script src="@routes.Assets.versioned("/public", "javascripts/form-loading.js")"></script>
   </body>
 </html>
 }
