@@ -67,6 +67,20 @@ POST        /work-history/:id        controllers.WorkHistoryController.update(re
 # Delete a work history
 POST        /work-history/:id/delete controllers.WorkHistoryController.delete(request: Request, id:Long)
 
+# Soil diagnostics list (look at the default values for pagination parameters)
+GET         /soil-diagnostics        controllers.SoilDiagnosticController.list(request: Request, p:Int ?= 0, s ?= "diagnosticDate", o ?= "desc", f ?= "")
+
+# Add soil diagnostic
+GET         /soil-diagnostics/new    controllers.SoilDiagnosticController.create(request: Request)
+POST        /soil-diagnostics        controllers.SoilDiagnosticController.save(request: Request)
+
+# Edit existing soil diagnostic
+GET         /soil-diagnostics/:id    controllers.SoilDiagnosticController.edit(request: Request, id:Long)
+POST        /soil-diagnostics/:id    controllers.SoilDiagnosticController.update(request: Request, id:Long)
+
+# Delete a soil diagnostic
+POST        /soil-diagnostics/:id/delete controllers.SoilDiagnosticController.delete(request: Request, id:Long)
+
 # Pesticide registration management (admin only)
 GET         /pesticides              controllers.PesticideController.list(request: Request, p:Int ?= 0, s ?= "registrationNumber", o ?= "asc", f ?= "")
 GET         /pesticides/upload       controllers.PesticideController.showUpload(request: Request)
