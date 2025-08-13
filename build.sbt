@@ -16,8 +16,9 @@ lazy val root = (project in file("."))
       "org.postgresql" % "postgresql" % "42.7.3",
       // Bootstrap webjar
       "org.webjars" % "bootstrap" % "5.3.0",
-      // SendGrid for email
-      "com.sendgrid" % "sendgrid-java" % "4.10.2",
+      // Play Mailer for email
+      "org.playframework" %% "play-mailer" % "10.0.0",
+      "org.playframework" %% "play-mailer-guice" % "10.0.0",
       // Testing libraries for dealing with CompletionStage...
       "com.h2database" % "h2" % "2.3.232" % Test,
       "org.assertj" % "assertj-core" % "3.26.3" % Test,

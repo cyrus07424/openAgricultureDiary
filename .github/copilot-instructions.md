@@ -1,6 +1,6 @@
 # Open Agriculture Diary
 
-Open Agriculture Diary (オープンソース農業日誌管理ツール) is a Play Framework 3.0.7 Java web application for managing agricultural diary records. The application tracks crops, fields, and work history with PostgreSQL database, email functionality via SendGrid, and Slack notifications.
+Open Agriculture Diary (オープンソース農業日誌管理ツール) is a Play Framework 3.0.7 Java web application for managing agricultural diary records. The application tracks crops, fields, and work history with PostgreSQL database, email functionality via SMTP, and Slack notifications.
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
@@ -20,10 +20,15 @@ export DATABASE_URL="jdbc:postgresql://localhost:5432/open_agriculture_diary"
 export DATABASE_URL_USERNAME="postgres"
 export DATABASE_URL_PASSWORD="your_password"
 
-# Email functionality (Optional - SendGrid)
-export SENDGRID_API_KEY="your_sendgrid_api_key"
-export SENDGRID_FROM_EMAIL="your_email@example.com" 
-export SENDGRID_FROM_NAME="Open Agriculture Diary"
+# Email functionality (Optional - SMTP)
+export SMTP_HOST="smtp.gmail.com"
+export SMTP_PORT="587"
+export SMTP_USER="your_email@example.com"
+export SMTP_PASSWORD="your_password_or_app_password"
+export SMTP_FROM_EMAIL="your_email@example.com" 
+export SMTP_FROM_NAME="Open Agriculture Diary"
+export SMTP_TLS="true"
+export SMTP_SSL="false"
 
 # Slack notifications (Optional)
 export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/..."
@@ -138,7 +143,7 @@ curl -s -o /dev/null -w "%{http_code}" -H "Host: localhost:9000" http://localhos
 ### Key Application Features
 - **Authentication**: Login, registration, password reset via email
 - **Core Entities**: Crops, Fields, Work History with CRUD operations
-- **Email Integration**: Welcome emails, password reset (SendGrid)
+- **Email Integration**: Welcome emails, password reset (SMTP)
 - **Slack Integration**: Activity notifications to Slack channel
 - **Multi-user**: User isolation for all agricultural data
 
@@ -197,8 +202,8 @@ INFO  application - ApplicationTimer demo: Starting application at [timestamp]
 
 **Expected Warning Messages (when optional features not configured):**
 ```
-WARN  s.EmailService - SENDGRID_API_KEY environment variable not set. Email functionality will be disabled.
-WARN  s.EmailService - SENDGRID_FROM_EMAIL environment variable not set. Email functionality will be disabled.
+WARN  s.EmailService - SMTP_FROM_EMAIL environment variable not set. Email functionality will be disabled.
+WARN  s.EmailService - SMTP_HOST environment variable not set. Email functionality will be disabled.
 WARN  s.SlackNotificationService - SLACK_WEBHOOK_URL environment variable not set. Slack notifications will be disabled.
 ```
 

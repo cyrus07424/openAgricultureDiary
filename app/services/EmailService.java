@@ -1,20 +1,17 @@
 package services;
 
-import com.sendgrid.*;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
 import play.Logger;
 import play.libs.concurrent.ClassLoaderExecutionContext;
+import play.libs.mailer.Email;
+import play.libs.mailer.MailerClient;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 /**
- * Service for sending emails using SendGrid
+ * Service for sending emails using SMTP
  */
 @Singleton
 public class EmailService {
@@ -22,22 +19,25 @@ public class EmailService {
     private static final Logger.ALogger logger = Logger.of(EmailService.class);
     
     private final ClassLoaderExecutionContext executionContext;
-    private final String apiKey;
+    private final MailerClient mailerClient;
     private final String fromEmail;
     private final String fromName;
     
     @Inject
-    public EmailService(ClassLoaderExecutionContext executionContext) {
+    public EmailService(ClassLoaderExecutionContext executionContext, MailerClient mailerClient) {
         this.executionContext = executionContext;
-        this.apiKey = System.getenv("SENDGRID_API_KEY");
-        this.fromEmail = System.getenv("SENDGRID_FROM_EMAIL");
-        this.fromName = System.getenv().getOrDefault("SENDGRID_FROM_NAME", "Open Agriculture Diary");
+        this.mailerClient = mailerClient;
+        this.fromEmail = System.getenv("SMTP_FROM_EMAIL");
+        this.fromName = System.getenv().getOrDefault("SMTP_FROM_NAME", "Open Agriculture Diary");
         
-        if (this.apiKey == null) {
-            logger.warn("SENDGRID_API_KEY environment variable not set. Email functionality will be disabled.");
-        }
         if (this.fromEmail == null) {
-            logger.warn("SENDGRID_FROM_EMAIL environment variable not set. Email functionality will be disabled.");
+            logger.warn("SMTP_FROM_EMAIL environment variable not set. Email functionality will be disabled.");
+        }
+        
+        // Check if SMTP configuration is present
+        String smtpHost = System.getenv("SMTP_HOST");
+        if (smtpHost == null) {
+            logger.warn("SMTP_HOST environment variable not set. Email functionality will be disabled.");
         }
     }
     
@@ -75,37 +75,23 @@ public class EmailService {
     }
     
     /**
-     * Send email using SendGrid
+     * Send email using SMTP via play-mailer
      */
     private CompletionStage<Boolean> sendEmail(String toEmail, String subject, String htmlContent, String textContent) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Email from = new Email(fromEmail, fromName);
-                Email to = new Email(toEmail);
-                Content content = new Content("text/html", htmlContent);
+                Email email = new Email()
+                    .setSubject(subject)
+                    .setFrom(fromName + " <" + fromEmail + ">")
+                    .addTo(toEmail)
+                    .setBodyText(textContent)
+                    .setBodyHtml(htmlContent);
                 
-                Mail mail = new Mail(from, subject, to, content);
-                mail.addContent(new Content("text/plain", textContent));
+                mailerClient.send(email);
+                logger.info("Email sent successfully to: " + toEmail);
+                return true;
                 
-                SendGrid sg = new SendGrid(apiKey);
-                Request request = new Request();
-                
-                request.setMethod(Method.POST);
-                request.setEndpoint("mail/send");
-                request.setBody(mail.build());
-                
-                Response response = sg.api(request);
-                
-                if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
-                    logger.info("Email sent successfully to: " + toEmail);
-                    return true;
-                } else {
-                    logger.error("Failed to send email. Status: " + response.getStatusCode() + 
-                               ", Body: " + response.getBody());
-                    return false;
-                }
-                
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Error sending email to: " + toEmail, e);
                 return false;
             }
@@ -116,7 +102,8 @@ public class EmailService {
      * Check if email service is properly configured
      */
     private boolean isConfigured() {
-        return apiKey != null && fromEmail != null;
+        String smtpHost = System.getenv("SMTP_HOST");
+        return smtpHost != null && fromEmail != null;
     }
     
     private String buildWelcomeEmailHtml(String username) {
