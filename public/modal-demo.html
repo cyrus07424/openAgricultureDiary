@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Open Agriculture Diary - Modal Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Loading modal styles */
+        .loading-modal .modal-content {
+          border-radius: 10px;
+          border: none;
+        }
+
+        .loading-modal .modal-body {
+          text-align: center;
+          padding: 2rem;
+        }
+
+        .loading-spinner {
+          width: 3rem;
+          height: 3rem;
+          margin-bottom: 1rem;
+        }
+
+        .loading-message {
+          font-size: 1.1rem;
+          color: #495057;
+          margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Open Agriculture Diary</a>
+        
+        <div class="navbar-nav mr-auto">
+            <a class="nav-link" href="#">作物管理</a>
+            <a class="nav-link" href="#">圃場管理</a>
+            <a class="nav-link" href="#">作業履歴</a>
+            <a class="nav-link" href="#">農薬登録情報</a>
+        </div>
+        
+        <div class="navbar-nav ml-auto">
+            <a class="nav-link" href="#">ログアウト</a>
+        </div>
+    </nav>
+
+    <main role="main" class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h2>作物作成フォーム</h2>
+                <form action="/crops" method="POST">
+                    <div class="mb-3">
+                        <label for="cropName" class="form-label">作物名</label>
+                        <input type="text" class="form-control" id="cropName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="introduced" class="form-label">導入日</label>
+                        <input type="date" class="form-control" id="introduced" name="introduced">
+                    </div>
+                    <button class="btn btn-success" type="submit">作物を作成する</button>
+                    <a href="#" class="btn btn-light">キャンセル</a>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <h2>圃場作成フォーム</h2>
+                <form action="/fields" method="POST">
+                    <div class="mb-3">
+                        <label for="fieldName" class="form-label">圃場名</label>
+                        <input type="text" class="form-control" id="fieldName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="latitude" class="form-label">緯度</label>
+                        <input type="text" class="form-control" id="latitude" name="latitude">
+                    </div>
+                    <button class="btn btn-success" type="submit">圃場を作成する</button>
+                    <a href="#" class="btn btn-light">キャンセル</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h2>作業履歴作成フォーム</h2>
+                <form action="/work-history" method="POST">
+                    <div class="mb-3">
+                        <label for="workDate" class="form-label">作業日</label>
+                        <input type="date" class="form-control" id="workDate" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">作業内容</label>
+                        <textarea class="form-control" id="content" name="content" rows="4"></textarea>
+                    </div>
+                    <button class="btn btn-success" type="submit">作業履歴を作成する</button>
+                    <a href="#" class="btn btn-light">キャンセル</a>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <h2>ユーザー登録フォーム</h2>
+                <form action="/register" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">ユーザー名</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">メールアドレス</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">パスワード</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">登録</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h2>削除フォーム</h2>
+                <form action="/crops/1/delete" method="POST">
+                    <p>テスト用作物を削除しますか？</p>
+                    <button class="btn btn-danger" type="submit">削除する</button>
+                    <a href="#" class="btn btn-light">キャンセル</a>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <h2>ファイルアップロードフォーム</h2>
+                <form action="/pesticides/upload" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">ファイル選択</label>
+                        <input type="file" class="form-control" id="file" name="file">
+                    </div>
+                    <button type="submit" class="btn btn-primary">アップロード</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Modal -->
+    <div class="modal fade loading-modal" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="d-flex flex-column align-items-center">
+              <div class="spinner-border text-primary loading-spinner" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div id="loadingMessage" class="loading-message">処理中です...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /**
+         * Form submission loading modal to prevent double-clicking
+         * Shows appropriate Japanese loading messages based on form action
+         */
+        (function() {
+            'use strict';
+            
+            // Map of form actions to appropriate Japanese loading messages
+            const loadingMessages = {
+                // Crop management
+                '/crops': '作物を作成中です...',
+                '/crops/': '作物を更新中です...',
+                '/delete': '削除中です...',
+                
+                // Field management  
+                '/fields': '圃場を作成中です...',
+                '/fields/': '圃場を更新中です...',
+                
+                // Work history
+                '/work-history': '作業履歴を作成中です...',
+                '/work-history/': '作業履歴を更新中です...',
+                
+                // Authentication
+                '/login': 'ログイン中です...',
+                '/register': '登録中です...',
+                '/forgot-password': 'メール送信中です...',
+                '/reset-password': 'パスワード変更中です...',
+                
+                // Pesticide management
+                '/pesticides/upload': 'アップロード中です...',
+                '/pesticides/clear': '削除中です...',
+                
+                // Default fallback
+                'default': '処理中です...'
+            };
+            
+            /**
+             * Get appropriate loading message based on form action
+             */
+            function getLoadingMessage(form) {
+                const action = form.getAttribute('action') || '';
+                const method = form.getAttribute('method') || 'GET';
+                
+                // Check for specific patterns
+                for (const pattern in loadingMessages) {
+                    if (pattern !== 'default' && action.includes(pattern)) {
+                        return loadingMessages[pattern];
+                    }
+                }
+                
+                // Check if it's a delete operation
+                if (action.includes('/delete') || form.querySelector('button[type="submit"]')?.textContent?.includes('削除')) {
+                    return loadingMessages['/delete'];
+                }
+                
+                return loadingMessages.default;
+            }
+            
+            /**
+             * Show loading modal
+             */
+            function showLoadingModal(message) {
+                const modal = document.getElementById('loadingModal');
+                const messageElement = document.getElementById('loadingMessage');
+                
+                if (modal && messageElement) {
+                    messageElement.textContent = message;
+                    const bootstrapModal = new bootstrap.Modal(modal, {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    bootstrapModal.show();
+                }
+            }
+            
+            /**
+             * Initialize form submission handlers
+             */
+            function initializeFormHandlers() {
+                const forms = document.querySelectorAll('form');
+                
+                forms.forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        // For demo purposes, prevent actual form submission
+                        event.preventDefault();
+                        
+                        const submitButton = form.querySelector('button[type="submit"]');
+                        
+                        // Prevent multiple submissions by disabling the submit button
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                        }
+                        
+                        // Get appropriate loading message and show modal
+                        const message = getLoadingMessage(form);
+                        showLoadingModal(message);
+                        
+                        // For demo, hide modal after 3 seconds and re-enable button
+                        setTimeout(function() {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
+                            if (modal) {
+                                modal.hide();
+                            }
+                            if (submitButton) {
+                                submitButton.disabled = false;
+                            }
+                        }, 3000);
+                    });
+                });
+            }
+            
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', initializeFormHandlers);
+        })();
+    </script>
+</body>
+</html>

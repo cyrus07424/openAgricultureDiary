@@ -11,3 +11,26 @@
   right: 20px;
   top: 70px;
 }
+
+/* Loading modal styles */
+.loading-modal .modal-content {
+  border-radius: 10px;
+  border: none;
+}
+
+.loading-modal .modal-body {
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+.loading-message {
+  font-size: 1.1rem;
+  color: #495057;
+  margin-top: 1rem;
+}

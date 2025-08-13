@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>フォーム送信時モーダルダイアログのデモ - Open Agriculture Diary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Loading modal styles - Same as implemented in main.css */
+        .loading-modal .modal-content {
+          border-radius: 10px;
+          border: none;
+        }
+
+        .loading-modal .modal-body {
+          text-align: center;
+          padding: 2rem;
+        }
+
+        .loading-spinner {
+          width: 3rem;
+          height: 3rem;
+          margin-bottom: 1rem;
+        }
+
+        .loading-message {
+          font-size: 1.1rem;
+          color: #495057;
+          margin-top: 1rem;
+        }
+        
+        .demo-card {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Open Agriculture Diary</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="#">作物管理</a>
+                <a class="nav-link" href="#">圃場管理</a>
+                <a class="nav-link" href="#">作業履歴</a>
+                <a class="nav-link" href="#">農薬登録情報</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">🎯 フォーム送信時モーダルダイアログのデモ</h1>
+                <div class="alert alert-info">
+                    <h5><strong>実装内容:</strong></h5>
+                    <ul class="mb-0">
+                        <li>✅ <strong>連打防止機能:</strong> フォーム送信時にボタンを無効化してダブルクリックを防ぐ</li>
+                        <li>✅ <strong>スマートメッセージ:</strong> フォームのアクションに応じて適切な日本語メッセージを表示</li>
+                        <li>✅ <strong>自動検出:</strong> ページ内のすべてのフォームを自動的に検出して処理</li>
+                        <li>✅ <strong>Bootstrap統合:</strong> 既存のBootstrap 5.3.0と完全に統合</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>🌾 作物作成フォーム</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/crops" method="POST">
+                            <div class="mb-3">
+                                <label for="cropName" class="form-label">作物名</label>
+                                <input type="text" class="form-control" id="cropName" name="name" value="水稲" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="introduced" class="form-label">導入日</label>
+                                <input type="date" class="form-control" id="introduced" name="introduced" value="2025-04-01">
+                            </div>
+                            <button class="btn btn-success" type="submit">作物を作成する</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「作物を作成中です...」</strong></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>🏞️ 圃場作成フォーム</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/fields" method="POST">
+                            <div class="mb-3">
+                                <label for="fieldName" class="form-label">圃場名</label>
+                                <input type="text" class="form-control" id="fieldName" name="name" value="第一水田" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="latitude" class="form-label">緯度</label>
+                                <input type="text" class="form-control" id="latitude" name="latitude" value="35.6762">
+                            </div>
+                            <button class="btn btn-success" type="submit">圃場を作成する</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「圃場を作成中です...」</strong></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>📝 作業履歴作成フォーム</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/work-history" method="POST">
+                            <div class="mb-3">
+                                <label for="workDate" class="form-label">作業日</label>
+                                <input type="date" class="form-control" id="workDate" name="date" value="2025-08-13" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="content" class="form-label">作業内容</label>
+                                <textarea class="form-control" id="content" name="content" rows="3">田植え作業を実施</textarea>
+                            </div>
+                            <button class="btn btn-success" type="submit">作業履歴を作成する</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「作業履歴を作成中です...」</strong></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>👤 ユーザー登録フォーム</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/register" method="POST">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">ユーザー名</label>
+                                <input type="text" class="form-control" id="username" name="username" value="農業太郎" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" id="email" name="email" value="taro@example.com" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">登録</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「登録中です...」</strong></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>🗑️ 削除フォーム</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/crops/1/delete" method="POST">
+                            <p>以下の作物を削除しますか？</p>
+                            <div class="alert alert-warning">
+                                <strong>作物名:</strong> 水稲<br>
+                                <strong>導入日:</strong> 2025-04-01
+                            </div>
+                            <button class="btn btn-danger" type="submit">削除する</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「削除中です...」</strong></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>📁 ファイルアップロードフォーム</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/pesticides/upload" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="file" class="form-label">農薬登録情報ファイル</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".csv,.xlsx">
+                            </div>
+                            <button type="submit" class="btn btn-primary">アップロード</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「アップロード中です...」</strong></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>🔐 ログインフォーム</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/login" method="POST">
+                            <div class="mb-3">
+                                <label for="loginUsername" class="form-label">ユーザー名</label>
+                                <input type="text" class="form-control" id="loginUsername" name="username" value="農業太郎" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="loginPassword" class="form-label">パスワード</label>
+                                <input type="password" class="form-control" id="loginPassword" name="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">ログイン</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「ログイン中です...」</strong></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card demo-card">
+                    <div class="card-header">
+                        <h5>🔄 汎用フォーム（デフォルトメッセージ）</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/unknown-action" method="POST">
+                            <div class="mb-3">
+                                <label for="genericField" class="form-label">汎用フィールド</label>
+                                <input type="text" class="form-control" id="genericField" name="field" value="その他の処理">
+                            </div>
+                            <button type="submit" class="btn btn-secondary">送信</button>
+                            <div class="mt-2">
+                                <small class="text-muted">→ 表示されるメッセージ: <strong>「処理中です...」</strong> (デフォルト)</small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-success">
+                    <h5><strong>🎉 実装完了!</strong></h5>
+                    <p class="mb-0">上記のフォームを送信してみてください。それぞれ適切な日本語メッセージとともにローディングモーダルが表示され、連打を防止します。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal - Same as implemented in main.scala.html and authLayout.scala.html -->
+    <div class="modal fade loading-modal" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="d-flex flex-column align-items-center">
+              <div class="spinner-border text-primary loading-spinner" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div id="loadingMessage" class="loading-message">処理中です...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Same JavaScript implementation as in form-loading.js
+        (function() {
+            'use strict';
+            
+            const loadingMessages = {
+                '/crops': '作物を作成中です...',
+                '/crops/': '作物を更新中です...',
+                '/delete': '削除中です...',
+                '/fields': '圃場を作成中です...',
+                '/fields/': '圃場を更新中です...',
+                '/work-history': '作業履歴を作成中です...',
+                '/work-history/': '作業履歴を更新中です...',
+                '/login': 'ログイン中です...',
+                '/register': '登録中です...',
+                '/forgot-password': 'メール送信中です...',
+                '/reset-password': 'パスワード変更中です...',
+                '/pesticides/upload': 'アップロード中です...',
+                '/pesticides/clear': '削除中です...',
+                'default': '処理中です...'
+            };
+            
+            function getLoadingMessage(form) {
+                const action = form.getAttribute('action') || '';
+                
+                for (const pattern in loadingMessages) {
+                    if (pattern !== 'default' && action.includes(pattern)) {
+                        return loadingMessages[pattern];
+                    }
+                }
+                
+                if (action.includes('/delete') || form.querySelector('button[type="submit"]')?.textContent?.includes('削除')) {
+                    return loadingMessages['/delete'];
+                }
+                
+                return loadingMessages.default;
+            }
+            
+            function showLoadingModal(message) {
+                const modal = document.getElementById('loadingModal');
+                const messageElement = document.getElementById('loadingMessage');
+                
+                if (modal && messageElement) {
+                    messageElement.textContent = message;
+                    const bootstrapModal = new bootstrap.Modal(modal, {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    bootstrapModal.show();
+                }
+            }
+            
+            function initializeFormHandlers() {
+                const forms = document.querySelectorAll('form');
+                
+                forms.forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        // For demo purposes, prevent actual form submission
+                        event.preventDefault();
+                        
+                        const submitButton = form.querySelector('button[type="submit"]');
+                        
+                        // Prevent multiple submissions by disabling the submit button
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                        }
+                        
+                        // Get appropriate loading message and show modal
+                        const message = getLoadingMessage(form);
+                        showLoadingModal(message);
+                        
+                        // For demo, hide modal after 3 seconds and re-enable button
+                        setTimeout(function() {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
+                            if (modal) {
+                                modal.hide();
+                            }
+                            if (submitButton) {
+                                submitButton.disabled = false;
+                            }
+                        }, 3000);
+                    });
+                });
+            }
+            
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', initializeFormHandlers);
+        })();
+    </script>
+</body>
+</html>
