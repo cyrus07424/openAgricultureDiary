@@ -16,6 +16,9 @@ lazy val root = (project in file("."))
       "org.postgresql" % "postgresql" % "42.7.3",
       // Bootstrap webjar
       "org.webjars" % "bootstrap" % "5.3.0",
+      // Password strength validation
+      "me.gosimple" % "nbvcxz" % "1.5.1",
+      "org.webjars.npm" % "zxcvbn" % "4.4.2",
       // Play Mailer for email
       "org.playframework" %% "play-mailer" % "10.0.0",
       "org.playframework" %% "play-mailer-guice" % "10.0.0",

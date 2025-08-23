@@ -49,7 +49,15 @@
             </div>
             
             <div class="form-group mb-3">
-              @inputPassword(registerForm("password"), Symbol("_label") -> "パスワード（6文字以上）", Symbol("class") -> "form-control")
+              @inputPassword(registerForm("password"), Symbol("_label") -> "パスワード（6文字以上）", Symbol("class") -> "form-control", Symbol("id") -> "password")
+              <div id="password-strength-container" style="display: none;">
+                <div class="password-strength-meter mt-2">
+                  <div class="progress" style="height: 8px;">
+                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                  </div>
+                  <small id="password-strength-text" class="form-text text-muted"></small>
+                </div>
+              </div>
             </div>
             
             <div class="form-group mb-3">
@@ -83,6 +91,86 @@
       </div>
     </div>
   </div>
+
+  <!-- Password strength validation -->
+  <script src="@routes.Assets.versioned("/META-INF/resources/webjars", "zxcvbn/4.4.2/dist/zxcvbn.js")"></script>
+  <script>
+    (function() {
+      'use strict';
+      
+      const passwordInput = document.getElementById('password');
+      const strengthContainer = document.getElementById('password-strength-container');
+      const strengthBar = document.getElementById('password-strength-bar');
+      const strengthText = document.getElementById('password-strength-text');
+      const submitButton = document.querySelector('button[type="submit"]');
+      
+      if (!passwordInput || !strengthContainer) return;
+      
+      const strengthLabels = {
+        0: { text: '非常に弱い', color: 'bg-danger', class: 'text-danger' },
+        1: { text: '弱い', color: 'bg-warning', class: 'text-warning' },
+        2: { text: '普通', color: 'bg-info', class: 'text-info' },
+        3: { text: '強い', color: 'bg-success', class: 'text-success' },
+        4: { text: '非常に強い', color: 'bg-success', class: 'text-success' }
+      };
+      
+      function updatePasswordStrength() {
+        const password = passwordInput.value;
+        
+        if (password.length === 0) {
+          strengthContainer.style.display = 'none';
+          return;
+        }
+        
+        strengthContainer.style.display = 'block';
+        
+        if (typeof zxcvbn === 'undefined') {
+          strengthText.textContent = 'パスワード強度チェックを読み込み中...';
+          return;
+        }
+        
+        const result = zxcvbn(password);
+        const score = result.score;
+        const strength = strengthLabels[score];
+        
+        // Update progress bar
+        strengthBar.className = 'progress-bar ' + strength.color;
+        strengthBar.style.width = ((score + 1) * 20) + '%';
+        
+        // Update text
+        strengthText.className = 'form-text ' + strength.class;
+        
+        if (score < 2) {
+          strengthText.textContent = '⚠️ パスワードが' + strength.text + 'です。より安全なパスワードを設定してください。';
+          if (submitButton) {
+            submitButton.disabled = true;
+          }
+        } else {
+          strengthText.textContent = '✓ パスワード強度: ' + strength.text;
+          if (submitButton) {
+            submitButton.disabled = false;
+          }
+        }
+        
+        // Show suggestions if available
+        if (result.feedback && result.feedback.suggestions && result.feedback.suggestions.length > 0) {
+          const suggestions = result.feedback.suggestions.join(' ');
+          strengthText.textContent += ' ヒント: ' + suggestions;
+        }
+      }
+      
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        if (passwordInput.value) {
+          updatePasswordStrength();
+        }
+      });
+      
+      // Update on input
+      passwordInput.addEventListener('input', updatePasswordStrength);
+      passwordInput.addEventListener('keyup', updatePasswordStrength);
+    })();
+  </script>
 
 }
 }

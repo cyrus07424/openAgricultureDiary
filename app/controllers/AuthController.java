@@ -17,6 +17,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.UserRepository;
 import services.EmailService;
+import services.PasswordStrengthService;
 import services.SlackNotificationService;
 import utils.GlobalConfigHelper;
 import utils.LegalLinksConfiguration;
@@ -41,6 +42,7 @@ public class AuthController extends Controller {
     private final MessagesApi messagesApi;
     private final EmailService emailService;
     private final SlackNotificationService slackNotificationService;
+    private final PasswordStrengthService passwordStrengthService;
 
     @Inject
     public AuthController(UserRepository userRepository,
@@ -48,13 +50,15 @@ public class AuthController extends Controller {
                          ClassLoaderExecutionContext classLoaderExecutionContext,
                          MessagesApi messagesApi,
                          EmailService emailService,
-                         SlackNotificationService slackNotificationService) {
+                         SlackNotificationService slackNotificationService,
+                         PasswordStrengthService passwordStrengthService) {
         this.userRepository = userRepository;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
         this.emailService = emailService;
         this.slackNotificationService = slackNotificationService;
+        this.passwordStrengthService = passwordStrengthService;
     }
 
     /**
@@ -153,6 +157,18 @@ public class AuthController extends Controller {
             return CompletableFuture.completedFuture(
                 badRequest(register.render(
                     registerForm.withError("confirmPassword", "パスワードが一致しません"),
+                    request, 
+                    messagesApi.preferred(request)
+                ))
+            );
+        }
+        
+        // Additional password strength check with detailed message
+        if (!passwordStrengthService.isPasswordStrong(data.getPassword())) {
+            String weaknessMessage = passwordStrengthService.getWeaknessMessage(data.getPassword());
+            return CompletableFuture.completedFuture(
+                badRequest(register.render(
+                    registerForm.withError("password", weaknessMessage),
                     request, 
                     messagesApi.preferred(request)
                 ))
@@ -324,6 +340,18 @@ public class AuthController extends Controller {
             return CompletableFuture.completedFuture(
                 badRequest(resetPassword.render(
                     resetForm.withError("confirmPassword", "パスワードが一致しません"),
+                    request, 
+                    messagesApi.preferred(request)
+                ))
+            );
+        }
+        
+        // Additional password strength check with detailed message
+        if (!passwordStrengthService.isPasswordStrong(data.getPassword())) {
+            String weaknessMessage = passwordStrengthService.getWeaknessMessage(data.getPassword());
+            return CompletableFuture.completedFuture(
+                badRequest(resetPassword.render(
+                    resetForm.withError("password", weaknessMessage),
                     request, 
                     messagesApi.preferred(request)
                 ))
