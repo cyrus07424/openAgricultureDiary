@@ -30,7 +30,7 @@ jobs:
     - name: Build with sbt
       run: sbt compile stage
     - name: Add label
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       if: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
       with:
         script: |
