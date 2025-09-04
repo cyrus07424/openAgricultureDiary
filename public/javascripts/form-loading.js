@@ -1,38 +1,42 @@
 /**
  * Form submission loading modal to prevent double-clicking
- * Shows appropriate Japanese loading messages based on form action
+ * Shows appropriate loading messages based on form action
+ * Now supports internationalization through data attributes
  */
 (function() {
     'use strict';
     
-    // Map of form actions to appropriate Japanese loading messages
-    const loadingMessages = {
+    // Default loading messages - these will be overridden by data attributes from server
+    const defaultLoadingMessages = {
         // Crop management
-        '/crops': '作物を作成中です...',
-        '/crops/': '作物を更新中です...',
-        '/delete': '削除中です...',
+        '/crops': 'Creating crop...',
+        '/crops/': 'Updating crop...',
+        '/delete': 'Deleting...',
         
         // Field management  
-        '/fields': '圃場を作成中です...',
-        '/fields/': '圃場を更新中です...',
+        '/fields': 'Creating field...',
+        '/fields/': 'Updating field...',
         
         // Work history
-        '/work-history': '作業履歴を作成中です...',
-        '/work-history/': '作業履歴を更新中です...',
+        '/work-history': 'Creating work entry...',
+        '/work-history/': 'Updating work entry...',
         
         // Authentication
-        '/login': 'ログイン中です...',
-        '/register': '登録中です...',
-        '/forgot-password': 'メール送信中です...',
-        '/reset-password': 'パスワード変更中です...',
+        '/login': 'Logging in...',
+        '/register': 'Registering...',
+        '/forgot-password': 'Sending email...',
+        '/reset-password': 'Resetting password...',
         
         // Pesticide management
-        '/pesticides/upload': 'アップロード中です...',
-        '/pesticides/clear': '削除中です...',
+        '/pesticides/upload': 'Uploading...',
+        '/pesticides/clear': 'Deleting...',
         
         // Default fallback
-        'default': '処理中です...'
+        'default': 'Processing...'
     };
+    
+    // Try to get localized messages from a global variable set by the server
+    const loadingMessages = window.loadingMessages || defaultLoadingMessages;
     
     /**
      * Get appropriate loading message based on form action
@@ -48,8 +52,8 @@
             }
         }
         
-        // Check if it's a delete operation
-        if (action.includes('/delete') || form.querySelector('button[type="submit"]')?.textContent?.includes('削除')) {
+        // Check if it's a delete operation (check both action and button text)
+        if (action.includes('/delete') || form.querySelector('button[type="submit"]')?.textContent?.includes('削除') || form.querySelector('button[type="submit"]')?.textContent?.includes('Delete')) {
             return loadingMessages['/delete'];
         }
         

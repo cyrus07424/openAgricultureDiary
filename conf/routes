@@ -7,6 +7,9 @@ GET         /assets/*file            controllers.Assets.versioned(path="/public"
 # Map webjar resources
 GET         /webjars/*file           controllers.Assets.versioned(path="/META-INF/resources/webjars", file)
 
+# Language switching
+GET         /language/:lang          controllers.LanguageController.switchLanguage(lang: String, request: Request)
+
 # Authentication routes
 GET         /login                   controllers.AuthController.showLogin(request: Request)
 POST        /login                   controllers.AuthController.login(request: Request)

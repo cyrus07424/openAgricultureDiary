@@ -1,0 +1,192 @@
+# Japanese Messages
+
+# Application Title
+app.title=オープン農業日誌
+
+# Navigation
+nav.crops=作物管理
+nav.fields=圃場管理
+nav.workhistory=作業履歴
+nav.pesticides=農薬登録情報
+nav.logout=ログアウト
+nav.language=言語
+
+# Authentication
+auth.login=ログイン
+auth.register=新規登録
+auth.logout=ログアウト
+auth.forgot.password=パスワード忘れ
+auth.reset.password=パスワード再設定
+auth.forgot.password.title=パスワードを忘れた場合
+auth.forgot.password.description=登録したメールアドレスを入力してください。パスワードリセット用のリンクをメールで送信します。
+auth.send.reset.button=パスワードリセット用メールを送信
+auth.back.to.login=ログインに戻る
+auth.username=ユーザー名
+auth.email=メールアドレス
+auth.password=パスワード
+auth.confirm.password=パスワード確認
+auth.remember.me=ログイン状態を保持する
+auth.login.button=ログイン
+auth.register.button=登録
+auth.send.reset.button=リセットリンク送信
+auth.reset.button=パスワード再設定
+auth.back.to.login=ログインに戻る
+auth.no.account=アカウントをお持ちでない場合
+auth.have.account=既にアカウントをお持ちの場合
+
+# Crops
+crops.list.title={0,choice,0#作物なし|1#1件の作物|1<{0,number,integer}件の作物}が見つかりました
+crops.management=作物管理
+crops.add.new=新しい作物を追加
+crops.name=作物名
+crops.variety=品種
+crops.planted.date=植付日
+crops.harvest.date=収穫日
+crops.notes=備考
+crops.actions=操作
+crops.edit=編集
+crops.delete=削除
+crops.save=保存
+crops.cancel=キャンセル
+crops.create.title=新しい作物を追加
+crops.edit.title=作物を編集
+crops.delete.confirm=この作物を削除してもよろしいですか？
+
+# Fields
+fields.list.title={0,choice,0#圃場なし|1#1件の圃場|1<{0,number,integer}件の圃場}が見つかりました
+fields.management=圃場管理
+fields.add.new=新しい圃場を追加
+fields.name=圃場名
+fields.area=面積
+fields.location=場所
+fields.soil.type=土壌タイプ
+fields.notes=備考
+fields.actions=操作
+fields.edit=編集
+fields.delete=削除
+fields.save=保存
+fields.cancel=キャンセル
+fields.create.title=新しい圃場を追加
+fields.edit.title=圃場を編集
+fields.delete.confirm=この圃場を削除してもよろしいですか？
+
+# Work History
+workhistory.management=作業履歴
+workhistory.add.new=新しい作業記録を追加
+workhistory.date=日付
+workhistory.crop=作物
+workhistory.field=圃場
+workhistory.work.type=作業種別
+workhistory.description=作業内容
+workhistory.duration=作業時間（時間）
+workhistory.notes=備考
+workhistory.actions=操作
+workhistory.edit=編集
+workhistory.delete=削除
+workhistory.save=保存
+workhistory.cancel=キャンセル
+workhistory.create.title=新しい作業記録を追加
+workhistory.edit.title=作業記録を編集
+workhistory.delete.confirm=この作業記録を削除してもよろしいですか？
+
+# Pesticides
+pesticides.management=農薬登録情報
+pesticides.registration.number=登録番号
+pesticides.name=農薬名
+pesticides.company=会社名
+pesticides.type=種類
+pesticides.upload=アップロード
+pesticides.clear=全削除
+pesticides.upload.title=農薬データアップロード
+pesticides.clear.confirm=全ての農薬データを削除してもよろしいですか？
+
+# Common
+common.search=検索
+common.add=追加
+common.edit=編集
+common.delete=削除
+common.save=保存
+common.cancel=キャンセル
+common.back=戻る
+common.actions=操作
+common.yes=はい
+common.no=いいえ
+common.loading=読み込み中...
+common.processing=処理中...
+common.success=成功
+common.error=エラー
+common.required=必須
+
+# Loading Messages
+loading.default=処理中です...
+loading.login=ログイン中です...
+loading.register=登録中です...
+loading.logout=ログアウト中です...
+loading.save=保存中です...
+loading.delete=削除中です...
+loading.upload=アップロード中です...
+loading.email.sending=メール送信中です...
+loading.password.reset=パスワード変更中です...
+loading.crops.create=作物を作成中です...
+loading.crops.update=作物を更新中です...
+loading.fields.create=圃場を作成中です...
+loading.fields.update=圃場を更新中です...
+loading.workhistory.create=作業履歴を作成中です...
+loading.workhistory.update=作業履歴を更新中です...
+loading.pesticides.upload=アップロード中です...
+loading.pesticides.clear=削除中です...
+
+# Email
+email.welcome.subject=農業日誌へようこそ！
+email.welcome.greeting={0} さん、
+email.welcome.message=農業日誌にご登録いただき、ありがとうございます。
+email.welcome.enjoy=これから農業活動の記録をお楽しみください。
+email.welcome.questions=何かご質問がございましたら、お気軽にお問い合わせください。
+email.welcome.regards=よろしくお願いいたします。\n農業日誌チーム
+
+email.password.reset.subject=パスワード再設定 - 農業日誌
+email.password.reset.greeting={0} さん、
+email.password.reset.message=農業日誌のパスワード再設定をリクエストされました。
+email.password.reset.link=以下のリンクをクリックしてパスワードを再設定してください：
+email.password.reset.expire=このリンクは24時間で期限切れとなります。
+email.password.reset.ignore=もしこのリクエストにお心当たりがない場合は、このメールを無視してください。
+email.password.reset.regards=よろしくお願いいたします。\n農業日誌チーム
+
+# Footer
+footer.terms=利用規約
+footer.privacy=プライバシーポリシー
+
+# Flash Messages
+flash.crop.created=作物が正常に作成されました！
+flash.crop.updated=作物が正常に更新されました！
+flash.crop.deleted=作物が正常に削除されました！
+flash.field.created=圃場が正常に作成されました！
+flash.field.updated=圃場が正常に更新されました！
+flash.field.deleted=圃場が正常に削除されました！
+flash.workhistory.created=作業記録が正常に作成されました！
+flash.workhistory.updated=作業記録が正常に更新されました！
+flash.workhistory.deleted=作業記録が正常に削除されました！
+flash.login.success=ログインが成功しました！
+flash.logout.success=ログアウトが成功しました！
+flash.register.success=登録が成功しました！農業日誌へようこそ！
+flash.password.reset.sent=パスワード再設定メールを送信しました！
+flash.password.reset.success=パスワードが正常に再設定されました！
+
+# Validation Messages
+validation.required=この項目は必須です。
+validation.email.invalid=有効なメールアドレスを入力してください。
+validation.password.mismatch=パスワードが一致しません。
+validation.password.weak=パスワードが弱すぎます。
+validation.password.strength.veryweak=非常に弱い
+validation.password.strength.weak=弱い
+validation.password.strength.fair=普通
+validation.password.strength.strong=強い
+validation.password.strength.verystrong=非常に強い
+validation.password.strength.loading=パスワード強度チェックを読み込み中...
+validation.password.strength.warning=⚠️ パスワードが{0}です。より安全なパスワードを設定してください。
+validation.password.strength.success=✓ パスワード強度: {0}
+validation.password.strength.hint=ヒント: {0}
+validation.username.exists=このユーザー名は既に使用されています。
+validation.email.exists=このメールアドレスは既に使用されています。
+validation.login.failed=ユーザー名またはパスワードが正しくありません。
+validation.terms.agree=利用規約に同意する必要があります。
