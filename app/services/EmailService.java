@@ -1,6 +1,9 @@
 package services;
 
 import play.Logger;
+import play.i18n.Lang;
+import play.i18n.Messages;
+import play.i18n.MessagesApi;
 import play.libs.concurrent.ClassLoaderExecutionContext;
 import play.libs.mailer.Email;
 import play.libs.mailer.MailerClient;
@@ -11,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 /**
- * Service for sending emails using SMTP
+ * Service for sending emails using SMTP with bilingual support
  */
 @Singleton
 public class EmailService {
@@ -20,13 +23,15 @@ public class EmailService {
     
     private final ClassLoaderExecutionContext executionContext;
     private final MailerClient mailerClient;
+    private final MessagesApi messagesApi;
     private final String fromEmail;
     private final String fromName;
     
     @Inject
-    public EmailService(ClassLoaderExecutionContext executionContext, MailerClient mailerClient) {
+    public EmailService(ClassLoaderExecutionContext executionContext, MailerClient mailerClient, MessagesApi messagesApi) {
         this.executionContext = executionContext;
         this.mailerClient = mailerClient;
+        this.messagesApi = messagesApi;
         this.fromEmail = System.getenv("SMTP_FROM_EMAIL");
         this.fromName = System.getenv().getOrDefault("SMTP_FROM_NAME", "Open Agriculture Diary");
         
@@ -42,7 +47,7 @@ public class EmailService {
     }
     
     /**
-     * Send a welcome email to a new user
+     * Send a welcome email to a new user (bilingual)
      */
     public CompletionStage<Boolean> sendWelcomeEmail(String toEmail, String username) {
         if (!isConfigured()) {
@@ -50,15 +55,22 @@ public class EmailService {
             return CompletableFuture.completedFuture(false);
         }
         
-        String subject = "農業日誌へようこそ！";
-        String htmlContent = buildWelcomeEmailHtml(username);
-        String textContent = buildWelcomeEmailText(username);
+        // Create bilingual subject and content
+        Messages messagesJa = messagesApi.preferred(java.util.Arrays.asList(Lang.forCode("ja")));
+        Messages messagesEn = messagesApi.preferred(java.util.Arrays.asList(Lang.forCode("en")));
+        
+        String subjectJa = messagesJa.at("email.welcome.subject");
+        String subjectEn = messagesEn.at("email.welcome.subject");
+        String subject = subjectJa + " / " + subjectEn;
+        
+        String htmlContent = buildBilingualWelcomeEmailHtml(username, messagesJa, messagesEn);
+        String textContent = buildBilingualWelcomeEmailText(username, messagesJa, messagesEn);
         
         return sendEmail(toEmail, subject, htmlContent, textContent);
     }
     
     /**
-     * Send a password reset email
+     * Send a password reset email (bilingual)
      */
     public CompletionStage<Boolean> sendPasswordResetEmail(String toEmail, String username, String resetToken, String baseUrl) {
         if (!isConfigured()) {
@@ -66,10 +78,17 @@ public class EmailService {
             return CompletableFuture.completedFuture(false);
         }
         
-        String subject = "パスワードリセットのご案内";
+        // Create bilingual subject and content
+        Messages messagesJa = messagesApi.preferred(java.util.Arrays.asList(Lang.forCode("ja")));
+        Messages messagesEn = messagesApi.preferred(java.util.Arrays.asList(Lang.forCode("en")));
+        
+        String subjectJa = messagesJa.at("email.password.reset.subject");
+        String subjectEn = messagesEn.at("email.password.reset.subject");
+        String subject = subjectJa + " / " + subjectEn;
+        
         String resetUrl = baseUrl + "/reset-password?token=" + resetToken;
-        String htmlContent = buildPasswordResetEmailHtml(username, resetUrl);
-        String textContent = buildPasswordResetEmailText(username, resetUrl);
+        String htmlContent = buildBilingualPasswordResetEmailHtml(username, resetUrl, messagesJa, messagesEn);
+        String textContent = buildBilingualPasswordResetEmailText(username, resetUrl, messagesJa, messagesEn);
         
         return sendEmail(toEmail, subject, htmlContent, textContent);
     }
@@ -106,49 +125,99 @@ public class EmailService {
         return smtpHost != null && fromEmail != null;
     }
     
-    private String buildWelcomeEmailHtml(String username) {
+    /**
+     * Build bilingual welcome email HTML content
+     */
+    private String buildBilingualWelcomeEmailHtml(String username, Messages messagesJa, Messages messagesEn) {
         return "<!DOCTYPE html>" +
                "<html><head><meta charset='UTF-8'></head><body>" +
-               "<h2>農業日誌へようこそ！</h2>" +
-               "<p>" + username + " さん、</p>" +
-               "<p>農業日誌にご登録いただき、ありがとうございます。</p>" +
-               "<p>これから農業活動の記録をお楽しみください。</p>" +
-               "<p>何かご質問がございましたら、お気軽にお問い合わせください。</p>" +
-               "<p>よろしくお願いいたします。<br>農業日誌チーム</p>" +
+               "<div style='margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ccc;'>" +
+               "<h2>" + messagesJa.at("email.welcome.subject") + "</h2>" +
+               "<p>" + messagesJa.at("email.welcome.greeting", username) + "</p>" +
+               "<p>" + messagesJa.at("email.welcome.message") + "</p>" +
+               "<p>" + messagesJa.at("email.welcome.enjoy") + "</p>" +
+               "<p>" + messagesJa.at("email.welcome.questions") + "</p>" +
+               "<p>" + messagesJa.at("email.welcome.regards").replace("\\n", "<br>") + "</p>" +
+               "</div>" +
+               "<div>" +
+               "<h2>" + messagesEn.at("email.welcome.subject") + "</h2>" +
+               "<p>" + messagesEn.at("email.welcome.greeting", username) + "</p>" +
+               "<p>" + messagesEn.at("email.welcome.message") + "</p>" +
+               "<p>" + messagesEn.at("email.welcome.enjoy") + "</p>" +
+               "<p>" + messagesEn.at("email.welcome.questions") + "</p>" +
+               "<p>" + messagesEn.at("email.welcome.regards").replace("\\n", "<br>") + "</p>" +
+               "</div>" +
                "</body></html>";
     }
     
-    private String buildWelcomeEmailText(String username) {
-        return "農業日誌へようこそ！\n\n" +
-               username + " さん、\n\n" +
-               "農業日誌にご登録いただき、ありがとうございます。\n" +
-               "これから農業活動の記録をお楽しみください。\n\n" +
-               "何かご質問がございましたら、お気軽にお問い合わせください。\n\n" +
-               "よろしくお願いいたします。\n農業日誌チーム";
+    /**
+     * Build bilingual welcome email text content
+     */
+    private String buildBilingualWelcomeEmailText(String username, Messages messagesJa, Messages messagesEn) {
+        return messagesJa.at("email.welcome.subject") + "\n\n" +
+               messagesJa.at("email.welcome.greeting", username) + "\n\n" +
+               messagesJa.at("email.welcome.message") + "\n" +
+               messagesJa.at("email.welcome.enjoy") + "\n\n" +
+               messagesJa.at("email.welcome.questions") + "\n\n" +
+               messagesJa.at("email.welcome.regards") + "\n\n" +
+               "---\n\n" +
+               messagesEn.at("email.welcome.subject") + "\n\n" +
+               messagesEn.at("email.welcome.greeting", username) + "\n\n" +
+               messagesEn.at("email.welcome.message") + "\n" +
+               messagesEn.at("email.welcome.enjoy") + "\n\n" +
+               messagesEn.at("email.welcome.questions") + "\n\n" +
+               messagesEn.at("email.welcome.regards");
     }
     
-    private String buildPasswordResetEmailHtml(String username, String resetUrl) {
+    /**
+     * Build bilingual password reset email HTML content
+     */
+    private String buildBilingualPasswordResetEmailHtml(String username, String resetUrl, Messages messagesJa, Messages messagesEn) {
         return "<!DOCTYPE html>" +
                "<html><head><meta charset='UTF-8'></head><body>" +
-               "<h2>パスワードリセットのご案内</h2>" +
-               "<p>" + username + " さん、</p>" +
-               "<p>パスワードリセットのリクエストを受け付けました。</p>" +
-               "<p>下記のURLをクリックして、新しいパスワードを設定してください：</p>" +
+               "<div style='margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ccc;'>" +
+               "<h2>" + messagesJa.at("email.password.reset.subject") + "</h2>" +
+               "<p>" + messagesJa.at("email.password.reset.greeting", username) + "</p>" +
+               "<p>" + messagesJa.at("email.password.reset.message") + "</p>" +
+               "<p>" + messagesJa.at("email.password.reset.link") + "</p>" +
                "<p><a href=\"" + resetUrl + "\">" + resetUrl + "</a></p>" +
-               "<p>このリンクは24時間有効です。</p>" +
-               "<p>もしこのリクエストにお心当たりがない場合は、このメールを無視してください。</p>" +
-               "<p>よろしくお願いいたします。<br>農業日誌チーム</p>" +
+               "<p>" + messagesJa.at("email.password.reset.expire") + "</p>" +
+               "<p>" + messagesJa.at("email.password.reset.ignore") + "</p>" +
+               "<p>" + messagesJa.at("email.password.reset.regards").replace("\\n", "<br>") + "</p>" +
+               "</div>" +
+               "<div>" +
+               "<h2>" + messagesEn.at("email.password.reset.subject") + "</h2>" +
+               "<p>" + messagesEn.at("email.password.reset.greeting", username) + "</p>" +
+               "<p>" + messagesEn.at("email.password.reset.message") + "</p>" +
+               "<p>" + messagesEn.at("email.password.reset.link") + "</p>" +
+               "<p><a href=\"" + resetUrl + "\">" + resetUrl + "</a></p>" +
+               "<p>" + messagesEn.at("email.password.reset.expire") + "</p>" +
+               "<p>" + messagesEn.at("email.password.reset.ignore") + "</p>" +
+               "<p>" + messagesEn.at("email.password.reset.regards").replace("\\n", "<br>") + "</p>" +
+               "</div>" +
                "</body></html>";
     }
     
-    private String buildPasswordResetEmailText(String username, String resetUrl) {
-        return "パスワードリセットのご案内\n\n" +
-               username + " さん、\n\n" +
-               "パスワードリセットのリクエストを受け付けました。\n" +
-               "下記のURLをクリックして、新しいパスワードを設定してください：\n\n" +
+    /**
+     * Build bilingual password reset email text content
+     */
+    private String buildBilingualPasswordResetEmailText(String username, String resetUrl, Messages messagesJa, Messages messagesEn) {
+        return messagesJa.at("email.password.reset.subject") + "\n\n" +
+               messagesJa.at("email.password.reset.greeting", username) + "\n\n" +
+               messagesJa.at("email.password.reset.message") + "\n" +
+               messagesJa.at("email.password.reset.link") + "\n\n" +
                resetUrl + "\n\n" +
-               "このリンクは24時間有効です。\n" +
-               "もしこのリクエストにお心当たりがない場合は、このメールを無視してください。\n\n" +
-               "よろしくお願いいたします。\n農業日誌チーム";
+               messagesJa.at("email.password.reset.expire") + "\n" +
+               messagesJa.at("email.password.reset.ignore") + "\n\n" +
+               messagesJa.at("email.password.reset.regards") + "\n\n" +
+               "---\n\n" +
+               messagesEn.at("email.password.reset.subject") + "\n\n" +
+               messagesEn.at("email.password.reset.greeting", username) + "\n\n" +
+               messagesEn.at("email.password.reset.message") + "\n" +
+               messagesEn.at("email.password.reset.link") + "\n\n" +
+               resetUrl + "\n\n" +
+               messagesEn.at("email.password.reset.expire") + "\n" +
+               messagesEn.at("email.password.reset.ignore") + "\n\n" +
+               messagesEn.at("email.password.reset.regards");
     }
 }

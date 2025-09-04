@@ -1,7 +1,180 @@
-# Messages
+# English Messages (Default)
 
+# Application Title
+app.title=Open Agriculture Diary
+
+# Navigation
+nav.crops=Crop Management
+nav.fields=Field Management
+nav.workhistory=Work History  
+nav.pesticides=Pesticide Registration
+nav.logout=Logout
+nav.language=Language
+
+# Authentication
+auth.login=Login
+auth.register=Register
+auth.logout=Logout
+auth.forgot.password=Forgot Password
+auth.reset.password=Reset Password
+auth.username=Username
+auth.email=Email Address
+auth.password=Password
+auth.confirm.password=Confirm Password
+auth.remember.me=Remember me
+auth.login.button=Login
+auth.register.button=Register
+auth.send.reset.button=Send Reset Link
+auth.reset.button=Reset Password
+auth.back.to.login=Back to login
+auth.no.account=Don''t have an account?
+auth.have.account=Already have an account?
+
+# Crops
 crops.list.title={0,choice,0#No crops|1#One crop|1<{0,number,integer} crops} found
+crops.management=Crop Management
+crops.add.new=Add New Crop
+crops.name=Crop Name
+crops.variety=Variety
+crops.planted.date=Planted Date
+crops.harvest.date=Harvest Date
+crops.notes=Notes
+crops.actions=Actions
+crops.edit=Edit
+crops.delete=Delete
+crops.save=Save
+crops.cancel=Cancel
+crops.create.title=Add New Crop
+crops.edit.title=Edit Crop
+crops.delete.confirm=Are you sure you want to delete this crop?
 
+# Fields
 fields.list.title={0,choice,0#No fields|1#One field|1<{0,number,integer} fields} found
+fields.management=Field Management
+fields.add.new=Add New Field
+fields.name=Field Name
+fields.area=Area
+fields.location=Location
+fields.soil.type=Soil Type
+fields.notes=Notes
+fields.actions=Actions
+fields.edit=Edit
+fields.delete=Delete
+fields.save=Save
+fields.cancel=Cancel
+fields.create.title=Add New Field
+fields.edit.title=Edit Field
+fields.delete.confirm=Are you sure you want to delete this field?
+
+# Work History
+workhistory.management=Work History
+workhistory.add.new=Add New Work Entry
+workhistory.date=Date
+workhistory.crop=Crop
+workhistory.field=Field
+workhistory.work.type=Work Type
+workhistory.description=Description
+workhistory.duration=Duration (hours)
+workhistory.notes=Notes
+workhistory.actions=Actions
+workhistory.edit=Edit
+workhistory.delete=Delete
+workhistory.save=Save
+workhistory.cancel=Cancel
+workhistory.create.title=Add New Work Entry
+workhistory.edit.title=Edit Work Entry
+workhistory.delete.confirm=Are you sure you want to delete this work entry?
+
+# Pesticides
+pesticides.management=Pesticide Registration
+pesticides.registration.number=Registration Number
+pesticides.name=Pesticide Name
+pesticides.company=Company
+pesticides.type=Type
+pesticides.upload=Upload
+pesticides.clear=Clear All
+pesticides.upload.title=Upload Pesticide Data
+pesticides.clear.confirm=Are you sure you want to clear all pesticide data?
+
+# Common
+common.search=Search
+common.add=Add
+common.edit=Edit
+common.delete=Delete
+common.save=Save
+common.cancel=Cancel
+common.back=Back
+common.actions=Actions
+common.yes=Yes
+common.no=No
+common.loading=Loading...
+common.processing=Processing...
+common.success=Success
+common.error=Error
+common.required=Required
+
+# Loading Messages
+loading.default=Processing...
+loading.login=Logging in...
+loading.register=Registering...
+loading.logout=Logging out...
+loading.save=Saving...
+loading.delete=Deleting...
+loading.upload=Uploading...
+loading.email.sending=Sending email...
+loading.password.reset=Resetting password...
+loading.crops.create=Creating crop...
+loading.crops.update=Updating crop...
+loading.fields.create=Creating field...
+loading.fields.update=Updating field...
+loading.workhistory.create=Creating work entry...
+loading.workhistory.update=Updating work entry...
+loading.pesticides.upload=Uploading pesticide data...
+loading.pesticides.clear=Clearing data...
+
+# Email
+email.welcome.subject=Welcome to Open Agriculture Diary!
+email.welcome.greeting=Hello {0},
+email.welcome.message=Thank you for registering with Open Agriculture Diary.
+email.welcome.enjoy=Please enjoy recording your agricultural activities.
+email.welcome.questions=If you have any questions, please don''t hesitate to contact us.
+email.welcome.regards=Best regards,\nOpen Agriculture Diary Team
+
+email.password.reset.subject=Password Reset - Open Agriculture Diary
+email.password.reset.greeting=Hello {0},
+email.password.reset.message=You have requested to reset your password for Open Agriculture Diary.
+email.password.reset.link=Please click the following link to reset your password:
+email.password.reset.expire=This link will expire in 24 hours.
+email.password.reset.ignore=If you did not request this password reset, please ignore this email.
+email.password.reset.regards=Best regards,\nOpen Agriculture Diary Team
+
+# Footer
+footer.terms=Terms of Service
+footer.privacy=Privacy Policy
+
+# Flash Messages
+flash.crop.created=Crop has been created successfully!
+flash.crop.updated=Crop has been updated successfully!
+flash.crop.deleted=Crop has been deleted successfully!
+flash.field.created=Field has been created successfully!
+flash.field.updated=Field has been updated successfully!
+flash.field.deleted=Field has been deleted successfully!
+flash.workhistory.created=Work entry has been created successfully!
+flash.workhistory.updated=Work entry has been updated successfully!
+flash.workhistory.deleted=Work entry has been deleted successfully!
+flash.login.success=Login successful!
+flash.logout.success=Logout successful!
+flash.register.success=Registration successful! Welcome to Open Agriculture Diary!
+flash.password.reset.sent=Password reset email has been sent!
+flash.password.reset.success=Password has been reset successfully!
+
+# Validation Messages
+validation.required=This field is required.
+validation.email.invalid=Please enter a valid email address.
+validation.password.mismatch=Passwords do not match.
+validation.password.weak=Password is too weak.
+validation.username.exists=Username already exists.
+validation.email.exists=Email address already exists.
+validation.login.failed=Invalid username or password.
 
 
