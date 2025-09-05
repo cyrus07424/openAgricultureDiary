@@ -136,7 +136,7 @@ public class SoilDiagnosticController extends Controller {
                 
                 // This is the HTTP rendering thread context
                 return GO_SOIL_DIAGNOSTIC_LIST
-                        .flashing("success", messagesApi.get(request, "flash.soildiagnostic.updated"));
+                        .flashing("success", messagesApi.preferred(request).at("flash.soildiagnostic.updated"));
             }, classLoaderExecutionContext.current());
         }
     }
@@ -182,7 +182,7 @@ public class SoilDiagnosticController extends Controller {
             
             // This is the HTTP rendering thread context
             return GO_SOIL_DIAGNOSTIC_LIST
-                    .flashing("success", messagesApi.get(request, "flash.soildiagnostic.created"));
+                    .flashing("success", messagesApi.preferred(request).at("flash.soildiagnostic.created"));
         }, classLoaderExecutionContext.current());
     }
 
@@ -216,7 +216,7 @@ public class SoilDiagnosticController extends Controller {
                 
                 // This is the HTTP rendering thread context
                 return GO_SOIL_DIAGNOSTIC_LIST
-                        .flashing("success", messagesApi.get(request, "flash.soildiagnostic.deleted"));
+                        .flashing("success", messagesApi.preferred(request).at("flash.soildiagnostic.deleted"));
             }, classLoaderExecutionContext.current());
         }, classLoaderExecutionContext.current());
     }
