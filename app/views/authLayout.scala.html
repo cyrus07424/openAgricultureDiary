@@ -1,4 +1,4 @@
-@(content: Html)(implicit request: play.mvc.Http.Request)
+@(content: Html)(implicit request: play.mvc.Http.Request, messages: play.i18n.Messages)
 @import utils.GlobalConfigHelper
 @defining(GlobalConfigHelper.getGoogleTagManager(request)) { gtm =>
 @defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
@@ -7,7 +7,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Open Agriculture Diary</title>
+    <title>@messages("app.title")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.versioned("/META-INF/resources/webjars", "bootstrap/5.3.0/css/bootstrap.min.css")">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
@@ -19,7 +19,20 @@
     @Html(gtm.getBodyScript.toString)
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-      <a class="navbar-brand" href="@routes.HomeController.index()">Open Agriculture Diary</a>
+      <a class="navbar-brand" href="@routes.HomeController.index()">@messages("app.title")</a>
+      
+      <!-- Language Switcher for auth pages -->
+      <div class="navbar-nav ml-auto">
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            @messages("nav.language")
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+            <li><a class="dropdown-item @if(messages.lang().code() == "en"){active}" href="@routes.LanguageController.switchLanguage("en")">English</a></li>
+            <li><a class="dropdown-item @if(messages.lang().code() == "ja"){active}" href="@routes.LanguageController.switchLanguage("ja")">日本語</a></li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <main role="main" class="container-fluid">
@@ -33,9 +46,9 @@
           <div class="modal-body">
             <div class="d-flex flex-column align-items-center">
               <div class="spinner-border text-primary loading-spinner" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">@messages("common.loading")</span>
               </div>
-              <div id="loadingMessage" class="loading-message">処理中です...</div>
+              <div id="loadingMessage" class="loading-message">@messages("loading.default")</div>
             </div>
           </div>
         </div>
@@ -48,10 +61,10 @@
           <div class="row">
             <div class="col-12 text-center">
               @if(legalLinks.hasTermsOfServiceUrl()) {
-                <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank" class="text-muted me-3">利用規約</a>
+                <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank" class="text-muted me-3">@messages("footer.terms")</a>
               }
               @if(legalLinks.hasPrivacyPolicyUrl()) {
-                <a href="@legalLinks.getPrivacyPolicyUrl().get()" target="_blank" class="text-muted">プライバシーポリシー</a>
+                <a href="@legalLinks.getPrivacyPolicyUrl().get()" target="_blank" class="text-muted">@messages("footer.privacy")</a>
               }
             </div>
           </div>
@@ -60,6 +73,25 @@
     }
 
     <script src="@routes.Assets.versioned("/META-INF/resources/webjars", "bootstrap/5.3.0/js/bootstrap.bundle.min.js")"></script>
+    <script>
+      // Set up internationalized loading messages for JavaScript
+      window.loadingMessages = {
+        '/crops': '@Html(messages("loading.crops.create").replace("'", "\\'"))',
+        '/crops/': '@Html(messages("loading.crops.update").replace("'", "\\'"))',
+        '/delete': '@Html(messages("loading.delete").replace("'", "\\'"))',
+        '/fields': '@Html(messages("loading.fields.create").replace("'", "\\'"))',
+        '/fields/': '@Html(messages("loading.fields.update").replace("'", "\\'"))',
+        '/work-history': '@Html(messages("loading.workhistory.create").replace("'", "\\'"))',
+        '/work-history/': '@Html(messages("loading.workhistory.update").replace("'", "\\'"))',
+        '/login': '@Html(messages("loading.login").replace("'", "\\'"))',
+        '/register': '@Html(messages("loading.register").replace("'", "\\'"))',
+        '/forgot-password': '@Html(messages("loading.email.sending").replace("'", "\\'"))',
+        '/reset-password': '@Html(messages("loading.password.reset").replace("'", "\\'"))',
+        '/pesticides/upload': '@Html(messages("loading.pesticides.upload").replace("'", "\\'"))',
+        '/pesticides/clear': '@Html(messages("loading.pesticides.clear").replace("'", "\\'"))',
+        'default': '@Html(messages("loading.default").replace("'", "\\'"))'
+      };
+    </script>
     <script src="@routes.Assets.versioned("/public", "javascripts/form-loading.js")"></script>
   </body>
 </html>

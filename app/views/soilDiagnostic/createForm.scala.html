@@ -10,7 +10,7 @@
 
 @main {
 
-    <h1 class="my-3" id="page-title">Add a soil diagnostic</h1>
+    <h1 class="my-3" id="page-title">@messages("soildiagnostics.create.title")</h1>
 
     @form(routes.SoilDiagnosticController.save()) {
 
@@ -18,101 +18,101 @@
         
         <div class="row">
             <div class="col-md-6 mb-3">
-                @inputText(soilDiagnosticForm("diagnosticDate"), Symbol("_label") -> "Diagnostic Date", Symbol("_help") -> "YYYY-MM-DD format", Symbol("type") -> "date")
+                @inputText(soilDiagnosticForm("diagnosticDate"), Symbol("_label") -> messages("soildiagnostics.date"), Symbol("_help") -> "YYYY-MM-DD format", Symbol("type") -> "date")
             </div>
             <div class="col-md-6 mb-3">
-                @select(soilDiagnosticForm("field.id"), fieldOptions.toSeq, Symbol("_label") -> "Field", Symbol("_default") -> "-- Choose a field --")
+                @select(soilDiagnosticForm("field.id"), fieldOptions.toSeq, Symbol("_label") -> messages("soildiagnostics.field"), Symbol("_default") -> "-- Choose a field --")
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12 mb-3">
-                <h4>pH Measurements</h4>
+                <h4>@messages("soildiagnostics.ph.measurements")</h4>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                @inputText(soilDiagnosticForm("phH2O"), Symbol("_label") -> "pH (H2O)", Symbol("_help") -> "pH measured in water", Symbol("type") -> "number", Symbol("step") -> "0.01")
+                @inputText(soilDiagnosticForm("phH2O"), Symbol("_label") -> messages("soildiagnostics.ph.h2o"), Symbol("_help") -> "pH measured in water", Symbol("type") -> "number", Symbol("step") -> "0.01")
             </div>
             <div class="col-md-6 mb-3">
-                @inputText(soilDiagnosticForm("phKCL"), Symbol("_label") -> "pH (KCL)", Symbol("_help") -> "pH measured in KCL solution", Symbol("type") -> "number", Symbol("step") -> "0.01")
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12 mb-3">
-                <h4>Electrical Properties</h4>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                @inputText(soilDiagnosticForm("ec"), Symbol("_label") -> "EC (Electrical Conductivity)", Symbol("_help") -> "μS/cm", Symbol("type") -> "number", Symbol("step") -> "0.001")
-            </div>
-            <div class="col-md-6 mb-3">
-                @inputText(soilDiagnosticForm("cec"), Symbol("_label") -> "CEC (Cation Exchange Capacity)", Symbol("_help") -> "cmol/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("phKCL"), Symbol("_label") -> messages("soildiagnostics.ph.kcl"), Symbol("_help") -> "pH measured in KCL solution", Symbol("type") -> "number", Symbol("step") -> "0.01")
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12 mb-3">
-                <h4>Nitrogen Measurements</h4>
+                <h4>@messages("soildiagnostics.electrical.properties")</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                @inputText(soilDiagnosticForm("ec"), Symbol("_label") -> messages("soildiagnostics.ec"), Symbol("_help") -> "μS/cm", Symbol("type") -> "number", Symbol("step") -> "0.001")
+            </div>
+            <div class="col-md-6 mb-3">
+                @inputText(soilDiagnosticForm("cec"), Symbol("_label") -> messages("soildiagnostics.cec"), Symbol("_help") -> "cmol/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <h4>@messages("soildiagnostics.nitrogen.measurements")</h4>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-4 mb-3">
-                @inputText(soilDiagnosticForm("nh4N"), Symbol("_label") -> "Ammonium Nitrogen (NH4-N)", Symbol("_help") -> "mg/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("nh4N"), Symbol("_label") -> messages("soildiagnostics.nh4.n"), Symbol("_help") -> "mg/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
             <div class="col-md-4 mb-3">
-                @inputText(soilDiagnosticForm("no3N"), Symbol("_label") -> "Nitrate Nitrogen (NO3-N)", Symbol("_help") -> "mg/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("no3N"), Symbol("_label") -> messages("soildiagnostics.no3.n"), Symbol("_help") -> "mg/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
             <div class="col-md-4 mb-3">
-                @inputText(soilDiagnosticForm("availableNitrogen"), Symbol("_label") -> "Available Nitrogen", Symbol("_help") -> "mg/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("availableNitrogen"), Symbol("_label") -> messages("soildiagnostics.available.nitrogen"), Symbol("_help") -> "mg/kg", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12 mb-3">
-                <h4>Mineral Content</h4>
+                <h4>@messages("soildiagnostics.mineral.content")</h4>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3 mb-3">
-                @inputText(soilDiagnosticForm("k2O"), Symbol("_label") -> "Potassium (K2O)", Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("k2O"), Symbol("_label") -> messages("soildiagnostics.k2o"), Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
             <div class="col-md-3 mb-3">
-                @inputText(soilDiagnosticForm("p2O5"), Symbol("_label") -> "Available Phosphorus (P2O5)", Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("p2O5"), Symbol("_label") -> messages("soildiagnostics.p2o5"), Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
             <div class="col-md-3 mb-3">
-                @inputText(soilDiagnosticForm("caO"), Symbol("_label") -> "Lime (CaO)", Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("caO"), Symbol("_label") -> messages("soildiagnostics.cao"), Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
             <div class="col-md-3 mb-3">
-                @inputText(soilDiagnosticForm("mgO"), Symbol("_label") -> "Magnesium Oxide (MgO)", Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("mgO"), Symbol("_label") -> messages("soildiagnostics.mgo"), Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12 mb-3">
-                <h4>Other Measurements</h4>
+                <h4>@messages("soildiagnostics.other.measurements")</h4>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                @inputText(soilDiagnosticForm("phosphorusAbsorptionCoefficient"), Symbol("_label") -> "Phosphorus Absorption Coefficient", Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("phosphorusAbsorptionCoefficient"), Symbol("_label") -> messages("soildiagnostics.phosphorus.absorption"), Symbol("_help") -> "mg/100g", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
             <div class="col-md-6 mb-3">
-                @inputText(soilDiagnosticForm("humus"), Symbol("_label") -> "Humus Content", Symbol("_help") -> "%", Symbol("type") -> "number", Symbol("step") -> "0.001")
+                @inputText(soilDiagnosticForm("humus"), Symbol("_label") -> messages("soildiagnostics.humus"), Symbol("_help") -> "%", Symbol("type") -> "number", Symbol("step") -> "0.001")
             </div>
         </div>
 
         <div class="actions">
-            <button class="btn btn-success" type="submit">Create this soil diagnostic</button>
+            <button class="btn btn-success" type="submit">@messages("soildiagnostics.save")</button>
             <span class="mx-2">or</span>
-            <a href="@routes.SoilDiagnosticController.list()" id="cancel" class="btn btn-light" role="button">Cancel</a>
+            <a href="@routes.SoilDiagnosticController.list()" id="cancel" class="btn btn-light" role="button">@messages("soildiagnostics.cancel")</a>
         </div>
     }
 

@@ -1,6 +1,7 @@
 package forms;
 
 import play.data.validation.Constraints;
+import validators.PasswordStrength;
 
 public class ResetPasswordForm {
     
@@ -9,6 +10,7 @@ public class ResetPasswordForm {
     
     @Constraints.Required
     @Constraints.MinLength(6)
+    @PasswordStrength
     private String password;
     
     @Constraints.Required

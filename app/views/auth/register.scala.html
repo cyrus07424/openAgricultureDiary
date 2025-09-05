@@ -24,7 +24,7 @@
     <div class="col-md-6 offset-md-3">
       <div class="card mt-5">
         <div class="card-header">
-          <h3>ユーザー登録</h3>
+          <h3>@messages("auth.register")</h3>
         </div>
         <div class="card-body">
           
@@ -41,19 +41,27 @@
             @CSRF.formField
             
             <div class="form-group mb-3">
-              @inputText(registerForm("username"), Symbol("_label") -> "ユーザー名", Symbol("class") -> "form-control")
+              @inputText(registerForm("username"), Symbol("_label") -> messages("auth.username"), Symbol("class") -> "form-control")
             </div>
             
             <div class="form-group mb-3">
-              @inputText(registerForm("email"), Symbol("_label") -> "メールアドレス", Symbol("class") -> "form-control", Symbol("_type") -> "email")
+              @inputText(registerForm("email"), Symbol("_label") -> messages("auth.email"), Symbol("class") -> "form-control", Symbol("_type") -> "email")
             </div>
             
             <div class="form-group mb-3">
-              @inputPassword(registerForm("password"), Symbol("_label") -> "パスワード（6文字以上）", Symbol("class") -> "form-control")
+              @inputPassword(registerForm("password"), Symbol("_label") -> messages("auth.password"), Symbol("class") -> "form-control", Symbol("id") -> "password")
+              <div id="password-strength-container" style="display: none;">
+                <div class="password-strength-meter mt-2">
+                  <div class="progress" style="height: 8px;">
+                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                  </div>
+                  <small id="password-strength-text" class="form-text text-muted"></small>
+                </div>
+              </div>
             </div>
             
             <div class="form-group mb-3">
-              @inputPassword(registerForm("confirmPassword"), Symbol("_label") -> "パスワード確認", Symbol("class") -> "form-control")
+              @inputPassword(registerForm("confirmPassword"), Symbol("_label") -> messages("auth.confirm.password"), Symbol("class") -> "form-control")
             </div>
             
             @if(legalLinks.hasTermsOfServiceUrl()) {
@@ -61,7 +69,7 @@
                 <div class="form-check">
                   <input class="form-check-input @if(registerForm("agreeToTerms").hasErrors) {is-invalid}" type="checkbox" value="true" id="agreeToTerms" name="agreeToTerms" @if(registerForm("agreeToTerms").value.orElse("false").equals("true")) {checked}>
                   <label class="form-check-label" for="agreeToTerms">
-                    <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank">利用規約</a>に同意する
+                    <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank">@messages("footer.terms")</a>に同意する
                   </label>
                   @if(registerForm("agreeToTerms").hasErrors) {
                     <div class="invalid-feedback">
@@ -72,17 +80,105 @@
               </div>
             }
             
-            <button type="submit" class="btn btn-primary">登録</button>
+            <button type="submit" class="btn btn-primary">@messages("auth.register.button")</button>
           }
           
           <div class="mt-3">
-            <p>既にアカウントをお持ちの方は <a href="@routes.AuthController.showLogin()">こちら</a> からログインしてください。</p>
+            <p>@messages("auth.have.account") <a href="@routes.AuthController.showLogin()">@messages("auth.login")</a></p>
           </div>
           
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Password strength validation -->
+  <script src="@routes.Assets.versioned("/META-INF/resources/webjars", "zxcvbn/4.4.2/dist/zxcvbn.js")"></script>
+  <script>
+    (function() {
+      'use strict';
+      
+      const passwordInput = document.getElementById('password');
+      const strengthContainer = document.getElementById('password-strength-container');
+      const strengthBar = document.getElementById('password-strength-bar');
+      const strengthText = document.getElementById('password-strength-text');
+      const submitButton = document.querySelector('button[type="submit"]');
+      
+      if (!passwordInput || !strengthContainer) return;
+      
+      // Get localized strength labels from server
+      const strengthLabels = {
+        0: { text: '@messages("validation.password.strength.veryweak")', color: 'bg-danger', class: 'text-danger' },
+        1: { text: '@messages("validation.password.strength.weak")', color: 'bg-warning', class: 'text-warning' },
+        2: { text: '@messages("validation.password.strength.fair")', color: 'bg-info', class: 'text-info' },
+        3: { text: '@messages("validation.password.strength.strong")', color: 'bg-success', class: 'text-success' },
+        4: { text: '@messages("validation.password.strength.verystrong")', color: 'bg-success', class: 'text-success' }
+      };
+      
+      const messages = {
+        loading: '@Html(messages("validation.password.strength.loading").replace("'", "\\'"))',
+        warning: '@Html(messages("validation.password.strength.warning").replace("'", "\\'"))',
+        success: '@Html(messages("validation.password.strength.success").replace("'", "\\'"))',
+        hint: '@Html(messages("validation.password.strength.hint").replace("'", "\\'"))'
+      };
+      
+      function updatePasswordStrength() {
+        const password = passwordInput.value;
+        
+        if (password.length === 0) {
+          strengthContainer.style.display = 'none';
+          return;
+        }
+        
+        strengthContainer.style.display = 'block';
+        
+        if (typeof zxcvbn === 'undefined') {
+          strengthText.textContent = messages.loading;
+          return;
+        }
+        
+        const result = zxcvbn(password);
+        const score = result.score;
+        const strength = strengthLabels[score];
+        
+        // Update progress bar
+        strengthBar.className = 'progress-bar ' + strength.color;
+        strengthBar.style.width = ((score + 1) * 20) + '%';
+        
+        // Update text
+        strengthText.className = 'form-text ' + strength.class;
+        
+        if (score < 2) {
+          strengthText.textContent = messages.warning.replace('{0}', strength.text);
+          if (submitButton) {
+            submitButton.disabled = true;
+          }
+        } else {
+          strengthText.textContent = messages.success.replace('{0}', strength.text);
+          if (submitButton) {
+            submitButton.disabled = false;
+          }
+        }
+        
+        // Show suggestions if available
+        if (result.feedback && result.feedback.suggestions && result.feedback.suggestions.length > 0) {
+          const suggestions = result.feedback.suggestions.join(' ');
+          strengthText.textContent += messages.hint.replace('{0}', suggestions);
+        }
+      }
+      
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        if (passwordInput.value) {
+          updatePasswordStrength();
+        }
+      });
+      
+      // Update on input
+      passwordInput.addEventListener('input', updatePasswordStrength);
+      passwordInput.addEventListener('keyup', updatePasswordStrength);
+    })();
+  </script>
 
 }
 }
