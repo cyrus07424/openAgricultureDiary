@@ -4,40 +4,48 @@
 @defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 <!DOCTYPE html>
-<html>
+<html class="hold-transition login-page">
   <head>
     <meta charset="utf-8">
     <title>@messages("app.title")</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/AdminLTE/css/adminlte.min.css")">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Bootstrap -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-
+    <!-- Custom styles -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")"/>
     @Html(gtm.getHeadScript.toString)
   </head>
-  <body>
+  <body class="hold-transition login-page">
     @Html(gtm.getBodyScript.toString)
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-      <a class="navbar-brand" href="@routes.HomeController.index()">@messages("app.title")</a>
-      
-      <!-- Language Switcher for auth pages -->
-      <div class="navbar-nav ml-auto">
-        <div class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            @messages("nav.language")
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-            <li><a class="dropdown-item @if(messages.lang().code() == "en"){active}" href="@routes.LanguageController.switchLanguage("en")">English</a></li>
-            <li><a class="dropdown-item @if(messages.lang().code() == "ja"){active}" href="@routes.LanguageController.switchLanguage("ja")">日本語</a></li>
-          </ul>
+    <!-- Language Switcher Navbar for auth pages -->
+    <nav class="navbar navbar-expand navbar-white navbar-light fixed-top" style="z-index: 1050;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="@routes.HomeController.index()">
+          <i class="fas fa-seedling mr-2"></i>@messages("app.title")
+        </a>
+        
+        <div class="navbar-nav ml-auto">
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-globe mr-1"></i>@messages("nav.language")
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+              <li><a class="dropdown-item @if(messages.lang().code() == "en"){active}" href="@routes.LanguageController.switchLanguage("en")">English</a></li>
+              <li><a class="dropdown-item @if(messages.lang().code() == "ja"){active}" href="@routes.LanguageController.switchLanguage("ja")">日本語</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
 
-    <main role="main" class="container-fluid">
-    @content
-    </main>
+    <div class="login-page" style="padding-top: 80px;">
+      @content
+    </div>
 
     <!-- Loading Modal -->
     <div class="modal fade loading-modal" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -72,7 +80,12 @@
       </footer>
     }
 
+    <!-- jQuery -->
+    <script src="@routes.Assets.versioned("lib/AdminLTE/plugins/jquery/jquery.min.js")"></script>
+    <!-- Bootstrap 4 -->
     <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <!-- AdminLTE App -->
+    <script src="@routes.Assets.versioned("lib/AdminLTE/js/adminlte.min.js")"></script>
     <script>
       // Set up internationalized loading messages for JavaScript
       window.loadingMessages = {

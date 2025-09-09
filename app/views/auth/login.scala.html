@@ -8,54 +8,93 @@
 @authLayout {
 
   @request.flash.asScala().get("success").map { successFlashValue =>
-    <div class="alert alert-success" role="alert">
-      @successFlashValue
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check mr-2"></i>@successFlashValue
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
   }
 
   @request.flash.asScala().get("error").map { errorFlashValue =>
-    <div class="alert alert-danger" role="alert">
-      @errorFlashValue
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-triangle mr-2"></i>@errorFlashValue
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
   }
 
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card mt-5">
-        <div class="card-header">
-          <h3>@messages("auth.login")</h3>
-        </div>
-        <div class="card-body">
+  <div class="login-box">
+    <div class="login-logo">
+      <b>@messages("app.title")</b>
+    </div>
+    
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">@messages("auth.login.subtitle")</p>
+
+        @form(action = routes.AuthController.login()) {
           
-          @form(action = routes.AuthController.login()) {
-            
-            @if(loginForm.hasGlobalErrors) {
-              <div class="alert alert-danger">
-                @for(error <- loginForm.globalErrors) {
-                  @error.message
-                }
-              </div>
-            }
-            
-            @CSRF.formField
-            
-            <div class="form-group mb-3">
-              @inputText(loginForm("username"), Symbol("_label") -> messages("auth.username"), Symbol("class") -> "form-control")
+          @if(loginForm.hasGlobalErrors) {
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-triangle mr-2"></i>
+              @for(error <- loginForm.globalErrors) {
+                @error.message
+              }
             </div>
-            
-            <div class="form-group mb-3">
-              @inputPassword(loginForm("password"), Symbol("_label") -> messages("auth.password"), Symbol("class") -> "form-control")
-            </div>
-            
-            <button type="submit" class="btn btn-primary">@messages("auth.login.button")</button>
           }
           
-          <div class="mt-3">
-            <p>@messages("auth.no.account") <a href="@routes.AuthController.showRegister()">@messages("auth.register")</a></p>
-            <p><a href="@routes.AuthController.showForgotPassword()">@messages("auth.forgot.password")</a></p>
+          @CSRF.formField
+          
+          <div class="input-group mb-3">
+            <input type="text" class="form-control @if(loginForm("username").hasErrors){is-invalid}" 
+                   name="@loginForm("username").name" 
+                   value="@loginForm("username").value.getOrElse("")"
+                   placeholder="@messages("auth.username")">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-user"></span>
+              </div>
+            </div>
+            @if(loginForm("username").hasErrors) {
+              <div class="invalid-feedback">
+                @loginForm("username").errors.mkString(", ")
+              </div>
+            }
           </div>
           
-        </div>
+          <div class="input-group mb-3">
+            <input type="password" class="form-control @if(loginForm("password").hasErrors){is-invalid}" 
+                   name="@loginForm("password").name"
+                   placeholder="@messages("auth.password")">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+            @if(loginForm("password").hasErrors) {
+              <div class="invalid-feedback">
+                @loginForm("password").errors.mkString(", ")
+              </div>
+            }
+          </div>
+          
+          <div class="row">
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-sign-in-alt mr-2"></i>@messages("auth.login.button")
+              </button>
+            </div>
+          </div>
+        }
+        
+        <p class="mb-1 mt-3">
+          <a href="@routes.AuthController.showForgotPassword()">@messages("auth.forgot.password")</a>
+        </p>
+        <p class="mb-0">
+          <a href="@routes.AuthController.showRegister()" class="text-center">@messages("auth.register.new.account")</a>
+        </p>
       </div>
     </div>
   </div>

@@ -1,3 +1,192 @@
+/* AdminLTE Custom Styles for Open Agriculture Diary */
+
+/* Sidebar customizations */
+.main-sidebar {
+  .brand-link {
+    .brand-image {
+      opacity: 0.8;
+      float: left;
+      line-height: 50px;
+      margin-left: 13px;
+      margin-right: 5px;
+      margin-top: -3px;
+      text-align: center;
+      width: 33px;
+      height: 33px;
+      font-size: 1.2rem;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+/* Login page customizations */
+.login-page, .register-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.login-box, .register-box {
+  width: 400px;
+  margin: 5% auto;
+  
+  .login-logo, .register-logo {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 35px;
+    color: white;
+    text-shadow: 0 0 20px rgba(255,255,255,0.3);
+  }
+}
+
+.login-card-body, .register-card-body {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 30px;
+  
+  .login-box-msg {
+    margin: 0;
+    text-align: center;
+    padding: 0 20px 20px 20px;
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .input-group {
+    .form-control {
+      border: 2px solid #e9ecef;
+      border-radius: 5px 0 0 5px;
+      padding: 12px 16px;
+      font-size: 16px;
+      
+      &:focus {
+        border-color: #007bff;
+        box-shadow: none;
+      }
+      
+      &.is-invalid {
+        border-color: #dc3545;
+      }
+    }
+    
+    .input-group-append .input-group-text {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-left: none;
+      border-radius: 0 5px 5px 0;
+      color: #666;
+    }
+  }
+  
+  .btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 25px;
+    
+    &:hover {
+      background: linear-gradient(45deg, #0056b3, #004085);
+    }
+  }
+}
+
+/* Alert customizations */
+.alert {
+  border-radius: 8px;
+  border: none;
+  
+  &.alert-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+  }
+  
+  &.alert-danger {
+    background: linear-gradient(45deg, #dc3545, #e74c3c);
+    color: white;
+  }
+}
+
+/* Password strength meter */
+.password-strength-meter {
+  margin-top: 10px;
+  
+  .progress {
+    height: 8px !important;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+}
+
+/* Content wrapper styling */
+.content-wrapper {
+  background: #f4f6f9;
+  min-height: calc(100vh - 57px);
+  
+  .content {
+    padding: 20px;
+  }
+}
+
+/* Navigation enhancements */
+.main-header.navbar {
+  .navbar-nav .nav-link {
+    color: #495057 !important;
+    
+    &:hover {
+      color: #007bff !important;
+    }
+  }
+}
+
+/* Card enhancements */
+.card {
+  box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+  border: none;
+  border-radius: 8px;
+  
+  .card-header {
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    border-radius: 8px 8px 0 0 !important;
+  }
+}
+
+/* Table enhancements */
+.table {
+  th {
+    background: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+  }
+}
+
+/* Button enhancements */
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  
+  &.btn-outline-primary {
+    border-color: #007bff;
+    
+    &:hover {
+      background: #007bff;
+    }
+  }
+}
+
+/* Sidebar menu active state */
+.sidebar .nav-sidebar .nav-item .nav-link.active {
+  background-color: #007bff !important;
+  color: #fff !important;
+}
+
+/* Original styles (preserved) */
 .sort-link-inactive i {
   visibility: hidden;
 }
@@ -33,4 +222,16 @@
   font-size: 1.1rem;
   color: #495057;
   margin-top: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-box, .register-box {
+    width: 90%;
+    margin: 10% auto;
+  }
+  
+  .main-sidebar {
+    margin-top: 57px;
+  }
 }

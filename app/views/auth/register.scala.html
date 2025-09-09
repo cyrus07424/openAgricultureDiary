@@ -20,13 +20,14 @@
     </div>
   }
 
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card mt-5">
-        <div class="card-header">
-          <h3>@messages("auth.register")</h3>
-        </div>
-        <div class="card-body">
+  <div class="register-box">
+    <div class="register-logo">
+      <b>@messages("app.title")</b>
+    </div>
+    
+    <div class="card">
+      <div class="card-body register-card-body">
+        <p class="login-box-msg">@messages("auth.register.subtitle")</p>
           
           @form(action = routes.AuthController.register()) {
             
@@ -40,39 +41,93 @@
             
             @CSRF.formField
             
-            <div class="form-group mb-3">
-              @inputText(registerForm("username"), Symbol("_label") -> messages("auth.username"), Symbol("class") -> "form-control")
-            </div>
-            
-            <div class="form-group mb-3">
-              @inputText(registerForm("email"), Symbol("_label") -> messages("auth.email"), Symbol("class") -> "form-control", Symbol("_type") -> "email")
-            </div>
-            
-            <div class="form-group mb-3">
-              @inputPassword(registerForm("password"), Symbol("_label") -> messages("auth.password"), Symbol("class") -> "form-control", Symbol("id") -> "password")
-              <div id="password-strength-container" style="display: none;">
-                <div class="password-strength-meter mt-2">
-                  <div class="progress" style="height: 8px;">
-                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
-                  </div>
-                  <small id="password-strength-text" class="form-text text-muted"></small>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control @if(registerForm("username").hasErrors){is-invalid}" 
+                     name="@registerForm("username").name" 
+                     value="@registerForm("username").value.getOrElse("")"
+                     placeholder="@messages("auth.username")">
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-user"></span>
                 </div>
+              </div>
+              @if(registerForm("username").hasErrors) {
+                <div class="invalid-feedback">
+                  @registerForm("username").errors.mkString(", ")
+                </div>
+              }
+            </div>
+            
+            <div class="input-group mb-3">
+              <input type="email" class="form-control @if(registerForm("email").hasErrors){is-invalid}" 
+                     name="@registerForm("email").name" 
+                     value="@registerForm("email").value.getOrElse("")"
+                     placeholder="@messages("auth.email")">
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-envelope"></span>
+                </div>
+              </div>
+              @if(registerForm("email").hasErrors) {
+                <div class="invalid-feedback">
+                  @registerForm("email").errors.mkString(", ")
+                </div>
+              }
+            </div>
+            
+            <div class="input-group mb-3">
+              <input type="password" class="form-control @if(registerForm("password").hasErrors){is-invalid}" 
+                     name="@registerForm("password").name" 
+                     id="password"
+                     placeholder="@messages("auth.password")">
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+              @if(registerForm("password").hasErrors) {
+                <div class="invalid-feedback">
+                  @registerForm("password").errors.mkString(", ")
+                </div>
+              }
+            </div>
+            
+            <div id="password-strength-container" style="display: none;" class="mb-3">
+              <div class="password-strength-meter">
+                <div class="progress" style="height: 8px;">
+                  <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                </div>
+                <small id="password-strength-text" class="form-text text-muted"></small>
               </div>
             </div>
             
-            <div class="form-group mb-3">
-              @inputPassword(registerForm("confirmPassword"), Symbol("_label") -> messages("auth.confirm.password"), Symbol("class") -> "form-control")
+            <div class="input-group mb-3">
+              <input type="password" class="form-control @if(registerForm("confirmPassword").hasErrors){is-invalid}" 
+                     name="@registerForm("confirmPassword").name"
+                     placeholder="@messages("auth.confirm.password")">
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+              @if(registerForm("confirmPassword").hasErrors) {
+                <div class="invalid-feedback">
+                  @registerForm("confirmPassword").errors.mkString(", ")
+                </div>
+              }
             </div>
             
             @if(legalLinks.hasTermsOfServiceUrl()) {
               <div class="form-group mb-3">
-                <div class="form-check">
-                  <input class="form-check-input @if(registerForm("agreeToTerms").hasErrors) {is-invalid}" type="checkbox" value="true" id="agreeToTerms" name="agreeToTerms" @if(registerForm("agreeToTerms").value.orElse("false").equals("true")) {checked}>
-                  <label class="form-check-label" for="agreeToTerms">
+                <div class="icheck-primary">
+                  <input type="checkbox" value="true" id="agreeToTerms" name="agreeToTerms" 
+                         class="@if(registerForm("agreeToTerms").hasErrors) {is-invalid}" 
+                         @if(registerForm("agreeToTerms").value.orElse("false").equals("true")) {checked}>
+                  <label for="agreeToTerms">
                     <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank">@messages("footer.terms")</a>に同意する
                   </label>
                   @if(registerForm("agreeToTerms").hasErrors) {
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback d-block">
                       @registerForm("agreeToTerms").errors.asScala.map(_.message).mkString(", ")
                     </div>
                   }
@@ -80,11 +135,17 @@
               </div>
             }
             
-            <button type="submit" class="btn btn-primary">@messages("auth.register.button")</button>
+            <div class="row">
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i class="fas fa-user-plus mr-2"></i>@messages("auth.register.button")
+                </button>
+              </div>
+            </div>
           }
           
-          <div class="mt-3">
-            <p>@messages("auth.have.account") <a href="@routes.AuthController.showLogin()">@messages("auth.login")</a></p>
+          <div class="mt-3 text-center">
+            <a href="@routes.AuthController.showLogin()">@messages("auth.have.account.login")</a>
           </div>
           
         </div>

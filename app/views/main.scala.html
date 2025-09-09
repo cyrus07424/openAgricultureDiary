@@ -4,49 +4,139 @@
 @defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 <!DOCTYPE html>
-<html>
+<html class="hold-transition sidebar-mini layout-fixed">
   <head>
     <meta charset="utf-8">
     <title>@messages("app.title")</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/AdminLTE/css/adminlte.min.css")">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Bootstrap -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-
+    <!-- Custom styles -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")"/>
     @Html(gtm.getHeadScript.toString)
   </head>
-  <body>
+  <body class="hold-transition sidebar-mini layout-fixed">
     @Html(gtm.getBodyScript.toString)
+    <div class="wrapper">
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-      <a class="navbar-brand" href="@routes.HomeController.index()">@messages("app.title")</a>
-      
-      <div class="navbar-nav mr-auto">
-        <a class="nav-link" href="@routes.CropController.list()">@messages("nav.crops")</a>
-        <a class="nav-link" href="@routes.FieldController.list()">@messages("nav.fields")</a>
-        <a class="nav-link" href="@routes.WorkHistoryController.list()">@messages("nav.workhistory")</a>
-        <a class="nav-link" href="@routes.SoilDiagnosticController.list()">@messages("nav.soildiagnostics")</a>
-        <a class="nav-link" href="@routes.PesticideController.list()">@messages("nav.pesticides")</a>
-      </div>
-      
-      <div class="navbar-nav ml-auto">
-        <!-- Language Switcher -->
-        <div class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            @messages("nav.language")
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-            <li><a class="dropdown-item @if(messages.lang().code() == "en"){active}" href="@routes.LanguageController.switchLanguage("en")">English</a></li>
-            <li><a class="dropdown-item @if(messages.lang().code() == "ja"){active}" href="@routes.LanguageController.switchLanguage("ja")">日本語</a></li>
-          </ul>
+      <!-- Navbar -->
+      <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+          </li>
+        </ul>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+          <!-- Language Switcher -->
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
+              <i class="fas fa-globe"></i> @messages("nav.language")
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item @if(messages.lang().code() == "en"){active}" href="@routes.LanguageController.switchLanguage("en")">
+                <i class="fas fa-flag-usa mr-2"></i> English
+              </a>
+              <a class="dropdown-item @if(messages.lang().code() == "ja"){active}" href="@routes.LanguageController.switchLanguage("ja")">
+                <i class="fas fa-flag mr-2"></i> 日本語
+              </a>
+            </div>
+          </li>
+          <!-- Logout -->
+          <li class="nav-item">
+            <a class="nav-link" href="@routes.AuthController.logout()">
+              <i class="fas fa-sign-out-alt"></i> @messages("nav.logout")
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main Sidebar Container -->
+      <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="@routes.HomeController.index()" class="brand-link">
+          <i class="fas fa-seedling brand-image img-circle elevation-3 ml-3"></i>
+          <span class="brand-text font-weight-light">@messages("app.title")</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- Sidebar Menu -->
+          <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+              <li class="nav-item">
+                <a href="@routes.HomeController.index()" class="nav-link">
+                  <i class="nav-icon fas fa-home"></i>
+                  <p>@messages("nav.dashboard")</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@routes.CropController.list()" class="nav-link">
+                  <i class="nav-icon fas fa-leaf"></i>
+                  <p>@messages("nav.crops")</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@routes.FieldController.list()" class="nav-link">
+                  <i class="nav-icon fas fa-map"></i>
+                  <p>@messages("nav.fields")</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@routes.WorkHistoryController.list()" class="nav-link">
+                  <i class="nav-icon fas fa-history"></i>
+                  <p>@messages("nav.workhistory")</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@routes.SoilDiagnosticController.list()" class="nav-link">
+                  <i class="nav-icon fas fa-flask"></i>
+                  <p>@messages("nav.soildiagnostics")</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@routes.PesticideController.list()" class="nav-link">
+                  <i class="nav-icon fas fa-spray-can"></i>
+                  <p>@messages("nav.pesticides")</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
-        <a class="nav-link" href="@routes.AuthController.logout()">@messages("nav.logout")</a>
-      </div>
-    </nav>
+      </aside>
 
-    <main role="main" class="container-fluid">
-    @content
-    </main>
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            @content
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer class="main-footer">
+        <strong>Copyright &copy; 2024 @messages("app.title").</strong>
+        All rights reserved.
+        @if(legalLinks.hasTermsOfServiceUrl() || legalLinks.hasPrivacyPolicyUrl()) {
+          <div class="float-right d-none d-sm-inline-block">
+            @if(legalLinks.hasTermsOfServiceUrl()) {
+              <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank" class="mr-3">@messages("footer.terms")</a>
+            }
+            @if(legalLinks.hasPrivacyPolicyUrl()) {
+              <a href="@legalLinks.getPrivacyPolicyUrl().get()" target="_blank">@messages("footer.privacy")</a>
+            }
+          </div>
+        }
+      </footer>
+    </div>
 
     <!-- Loading Modal -->
     <div class="modal fade loading-modal" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -64,24 +154,12 @@
       </div>
     </div>
 
-    @if(legalLinks.hasTermsOfServiceUrl() || legalLinks.hasPrivacyPolicyUrl()) {
-      <footer class="bg-light border-top py-3 mt-5">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-12 text-center">
-              @if(legalLinks.hasTermsOfServiceUrl()) {
-                <a href="@legalLinks.getTermsOfServiceUrl().get()" target="_blank" class="text-muted me-3">@messages("footer.terms")</a>
-              }
-              @if(legalLinks.hasPrivacyPolicyUrl()) {
-                <a href="@legalLinks.getPrivacyPolicyUrl().get()" target="_blank" class="text-muted">@messages("footer.privacy")</a>
-              }
-            </div>
-          </div>
-        </div>
-      </footer>
-    }
-
+    <!-- jQuery -->
+    <script src="@routes.Assets.versioned("lib/AdminLTE/plugins/jquery/jquery.min.js")"></script>
+    <!-- Bootstrap 4 -->
     <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <!-- AdminLTE App -->
+    <script src="@routes.Assets.versioned("lib/AdminLTE/js/adminlte.min.js")"></script>
     <script>
       // Set up internationalized loading messages for JavaScript
       window.loadingMessages = {
