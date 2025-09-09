@@ -1,0 +1,40 @@
+@(field: Field, label: String, selectOptions: Seq[(String, String)], defaultText: String = "", icon: String = "fas fa-list", required: Boolean = false, help: Option[String] = None)(implicit messages: play.i18n.Messages)
+
+@import play.api.data.Field
+
+<div class="form-group">
+    <label for="@field.name" class="form-label">
+        @label
+        @if(required) { <span class="text-danger">*</span> }
+    </label>
+    
+    <div class="input-group mb-3">
+        <select 
+            id="@field.name" 
+            name="@field.name" 
+            class="form-control @if(field.hasErrors){is-invalid}"
+            @if(required) { required }
+        >
+            @if(defaultText.nonEmpty) {
+                <option value="">@defaultText</option>
+            }
+            @for((value, optionLabel) <- selectOptions) {
+                <option value="@value" @if(field.value.contains(value)){selected}>@optionLabel</option>
+            }
+        </select>
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <i class="@icon"></i>
+            </div>
+        </div>
+        @if(field.hasErrors) {
+            <div class="invalid-feedback">
+                @field.errors.mkString(", ")
+            </div>
+        }
+    </div>
+    
+    @help.map { helpText =>
+        <small class="form-text text-muted">@helpText</small>
+    }
+</div>
