@@ -4,17 +4,15 @@
 @defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 <!DOCTYPE html>
-<html class="hold-transition sidebar-mini layout-fixed">
+<html class="hold-transition sidebar-mini layout-fixed" lang="ja">
   <head>
     <meta charset="utf-8">
     <title>@messages("app.title")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- AdminLTE CSS -->
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/AdminLTE/css/adminlte.min.css")">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Bootstrap -->
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/AdminLTE/dist/css/adminlte.min.css")">
     <!-- Custom styles -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")"/>
     @Html(gtm.getHeadScript.toString)
@@ -154,12 +152,10 @@
       </div>
     </div>
 
-    <!-- jQuery -->
+    <!-- scripts -->
     <script src="@routes.Assets.versioned("lib/AdminLTE/plugins/jquery/jquery.min.js")"></script>
-    <!-- Bootstrap 4 -->
-    <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
-    <!-- AdminLTE App -->
-    <script src="@routes.Assets.versioned("lib/AdminLTE/js/adminlte.min.js")"></script>
+    <script src="@routes.Assets.versioned("lib/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <script src="@routes.Assets.versioned("lib/AdminLTE/dist/js/adminlte.min.js")"></script>
     <script>
       // Set up internationalized loading messages for JavaScript
       window.loadingMessages = {
