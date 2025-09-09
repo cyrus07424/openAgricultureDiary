@@ -25,6 +25,7 @@
         <a class="nav-link" href="@routes.CropController.list()">@messages("nav.crops")</a>
         <a class="nav-link" href="@routes.FieldController.list()">@messages("nav.fields")</a>
         <a class="nav-link" href="@routes.WorkHistoryController.list()">@messages("nav.workhistory")</a>
+        <a class="nav-link" href="@routes.SoilDiagnosticController.list()">@messages("nav.soildiagnostics")</a>
         <a class="nav-link" href="@routes.PesticideController.list()">@messages("nav.pesticides")</a>
       </div>
       
@@ -91,6 +92,8 @@
         '/fields/': '@Html(messages("loading.fields.update").replace("'", "\\'"))',
         '/work-history': '@Html(messages("loading.workhistory.create").replace("'", "\\'"))',
         '/work-history/': '@Html(messages("loading.workhistory.update").replace("'", "\\'"))',
+        '/soil-diagnostics': '@Html(messages("loading.soildiagnostics.create").replace("'", "\\'"))',
+        '/soil-diagnostics/': '@Html(messages("loading.soildiagnostics.update").replace("'", "\\'"))',
         '/login': '@Html(messages("loading.login").replace("'", "\\'"))',
         '/register': '@Html(messages("loading.register").replace("'", "\\'"))',
         '/forgot-password': '@Html(messages("loading.email.sending").replace("'", "\\'"))',
