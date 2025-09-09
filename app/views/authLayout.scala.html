@@ -9,10 +9,10 @@
     <meta charset="utf-8">
     <title>@messages("app.title")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.versioned("/META-INF/resources/webjars", "bootstrap/5.3.0/css/bootstrap.min.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("/public", "stylesheets/main.css")"/>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")"/>
     @Html(gtm.getHeadScript.toString)
   </head>
   <body>
@@ -72,7 +72,7 @@
       </footer>
     }
 
-    <script src="@routes.Assets.versioned("/META-INF/resources/webjars", "bootstrap/5.3.0/js/bootstrap.bundle.min.js")"></script>
+    <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
     <script>
       // Set up internationalized loading messages for JavaScript
       window.loadingMessages = {
@@ -92,7 +92,7 @@
         'default': '@Html(messages("loading.default").replace("'", "\\'"))'
       };
     </script>
-    <script src="@routes.Assets.versioned("/public", "javascripts/form-loading.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/form-loading.js")"></script>
   </body>
 </html>
 }
