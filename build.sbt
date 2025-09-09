@@ -17,7 +17,7 @@ lazy val root = (project in file("."))
       "org.playframework" %% "play-mailer" % "10.0.0",
       "org.playframework" %% "play-mailer-guice" % "10.0.0",
       // WebJars
-      "org.webjars" % "bootstrap" % "5.3.0",
+      "org.webjars" % "AdminLTE" % "3.2.0",
       "org.webjars.npm" % "zxcvbn" % "4.4.2",
       // Testing libraries for dealing with CompletionStage...
       "com.h2database" % "h2" % "2.3.232" % Test,

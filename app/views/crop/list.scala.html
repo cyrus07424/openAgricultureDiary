@@ -53,103 +53,159 @@
 
 @main {
 
-  <h1 class="my-3" id="page-title">@Messages("crops.list.title", currentPage.getTotalCount)</h1>
-
-  @request.flash.asScala().get("success").map { successFlashValue =>
-    <div class="alert alert-warning" role="alert">
-      <strong>Done!</strong> @successFlashValue
-    </div>
-  }
-
-  <div class="row">
-    <div class="col-sm-6">
-      <form class="form-inline" action="@link(0, "name")" method="GET">
-        <div class="form-group mr-sm-2 mb-2">
-          <label for="searchbox" class="sr-only">Filter by crop name...</label>
-          <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by crop name...">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 id="page-title">@Messages("crops.list.title", currentPage.getTotalCount)</h1>
         </div>
-        <button type="submit" id="searchsubmit" class="btn btn-primary mb-2">Filter by name</button>
-      </form>
-    </div>
-    <div class="col-sm-6">
-      <a href="@routes.CropController.create()" id="add" class="btn btn-success float-right" role="button"1>Add a new crop</a>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@routes.HomeController.index()">@messages("nav.dashboard")</a></li>
+            <li class="breadcrumb-item active">@messages("nav.crops")</li>
+          </ol>
+        </div>
+      </div>
     </div>
   </div>
 
-  @if(currentPage.getTotalCount == 0) {
+  <section class="content">
+    <div class="container-fluid">
 
-    <div class="card card-body bg-light">
-      <em>Nothing to display</em>
-    </div>
-
-  } else {
-
-    <table class="table table-bordered table-striped table-hover">
-      <thead class="thead-light">
-        <tr>
-          @header("name", "Crop name")
-          @header("introduced", "Introduced")
-          @header("discontinued", "Discontinued")
-          @header("company.name", "Company")
-        </tr>
-      </thead>
-      <tbody>
-
-      @for(crop <- currentPage.getList.asScala) {
-        <tr>
-          <td><a href="@routes.CropController.edit(crop.getId())">@crop.getName()</a></td>
-          <td>
-          @if(crop.getIntroduced() == null) {
-            <em>-</em>
-          } else {
-            @crop.getIntroduced().format("dd MMM yyyy")
-          }
-          </td>
-          <td>
-          @if(crop.getDiscontinued() == null) {
-            <em>-</em>
-          } else {
-            @crop.getDiscontinued().format("dd MMM yyyy")
-          }
-          </td>
-          <td>
-          @if(crop.getCompany() == null) {
-            <em>-</em>
-          } else {
-            @crop.getCompany().getName()
-          }
-          </td>
-        </tr>
+      @request.flash.asScala().get("success").map { successFlashValue =>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="fas fa-check mr-2"></i><strong>@messages("form.success")</strong> @successFlashValue
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       }
 
-      </tbody>
-    </table>
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">@messages("crops.list.subtitle")</h3>
+          <div class="card-tools">
+            <a href="@routes.CropController.create()" class="btn btn-primary btn-sm">
+              <i class="fas fa-plus mr-1"></i>@messages("crops.add.button")
+            </a>
+          </div>
+        </div>
 
-    <nav aria-label="...">
-      <ul class="pagination float-right">
-        @if(currentPage.hasPrev) {
-          <li class="page-item previous">
-            <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
-          </li>
-        } else {
-          <li class="page-item previous disabled">
-            <a class="page-link">&larr; Previous</a>
-          </li>
-        }
-        <li class="page-item disabled" aria-current="page">
-          <a class="page-link" href="#">Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
-        </li>
-        @if(currentPage.hasNext) {
-          <li class="page-item next">
-            <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
-          </li>
-        } else {
-          <li class="page-item next disabled">
-            <a class="page-link" >Next &rarr;</a>
-          </li>
-        }
-      </ul>
-    </nav>
+        <div class="card-body">
+          <!-- Search Form -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <form action="@link(0, "name")" method="GET">
+                <div class="input-group">
+                  <input type="search" class="form-control" name="f" value="@currentFilter" 
+                         placeholder="@messages("crops.filter.placeholder")">
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-primary">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
 
-  }
+          @if(currentPage.getTotalCount == 0) {
+            <div class="callout callout-info">
+              <h5>@messages("list.empty.title")</h5>
+              <p>@messages("crops.empty.message")</p>
+            </div>
+          } else {
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    @header("name", messages("crop.name"))
+                    @header("introduced", messages("crop.introduced"))
+                    @header("discontinued", messages("crop.discontinued"))
+                    @header("company.name", messages("crop.company"))
+                    <th>@messages("form.actions")</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                @for(crop <- currentPage.getList.asScala) {
+                  <tr>
+                    <td><strong>@crop.getName()</strong></td>
+                    <td>
+                      @if(crop.getIntroduced() == null) {
+                        <span class="text-muted">@messages("form.not.set")</span>
+                      } else {
+                        @crop.getIntroduced().format("dd MMM yyyy")
+                      }
+                    </td>
+                    <td>
+                      @if(crop.getDiscontinued() == null) {
+                        <span class="text-muted">@messages("form.not.set")</span>
+                      } else {
+                        @crop.getDiscontinued().format("dd MMM yyyy")
+                      }
+                    </td>
+                    <td>
+                      @if(crop.getCompany() == null) {
+                        <span class="text-muted">@messages("form.not.set")</span>
+                      } else {
+                        @crop.getCompany().getName()
+                      }
+                    </td>
+                    <td>
+                      <a href="@routes.CropController.edit(crop.getId())" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit"></i> @messages("form.edit")
+                      </a>
+                    </td>
+                  </tr>
+                }
+
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="row">
+              <div class="col-sm-5">
+                <div class="dataTables_info">
+                  @messages("pagination.showing") @currentPage.getDisplayXtoYofZ(" to ", " of ") @messages("pagination.entries")
+                </div>
+              </div>
+              <div class="col-sm-7">
+                <nav aria-label="...">
+                  <ul class="pagination pagination-sm float-right">
+                    @if(currentPage.hasPrev) {
+                      <li class="page-item">
+                        <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)">
+                          <i class="fas fa-angle-left"></i>
+                        </a>
+                      </li>
+                    } else {
+                      <li class="page-item disabled">
+                        <span class="page-link"><i class="fas fa-angle-left"></i></span>
+                      </li>
+                    }
+                    
+                    @if(currentPage.hasNext) {
+                      <li class="page-item">
+                        <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)">
+                          <i class="fas fa-angle-right"></i>
+                        </a>
+                      </li>
+                    } else {
+                      <li class="page-item disabled">
+                        <span class="page-link"><i class="fas fa-angle-right"></i></span>
+                      </li>
+                    }
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </section>
+
 }

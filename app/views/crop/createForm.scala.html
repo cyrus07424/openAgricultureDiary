@@ -1,49 +1,97 @@
 @(cropForm: Form[Crop], companies: Map[String, String])(implicit request: Http.Request, messages: play.i18n.Messages)
 @import utils.GlobalConfigHelper
-
-@import helper._
-
-@implicitField: FieldConstructor = @{ FieldConstructor(tags.forms.field_constructor.render) }
+@import helper.{form, CSRF}
+@import views.html.tags.forms.{simple_input, simple_select}
 
 @main {
 
-    <h1 class="my-3" id="page-title">Add a crop</h1>
-
-    @form(routes.CropController.save()) {
-
-        @CSRF.formField
-        <div class="row">
-            <div class="col-md-3 mb-3">
-            @inputText(cropForm("name"), Symbol("_label") -> "Crop name", Symbol("_help") -> "")
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 id="page-title">Add Crop</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="@routes.HomeController.index()">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="@routes.CropController.list()">Crops</a></li>
+                        <li class="breadcrumb-item active">Add Crop</li>
+                    </ol>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3 mb-3">
-            @inputDate(cropForm("introduced"), Symbol("_label") -> "Introduced date", Symbol("_help") -> "")
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3 mb-3">
-            @inputDate(cropForm("discontinued"), Symbol("_label") -> "Discontinued date", Symbol("_help") -> "")
-            </div>
-        </div>
+    </div>
 
-        <div class="row">
-            <div class="col-md-3 mb-3">
-            @select(
-                cropForm("company.id"),
-                options(companies),
-                Symbol("_label") -> "Company", Symbol("_default") -> "-- Choose a company --",
-                Symbol("_showConstraints") -> false
-            )
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Crop Details</h3>
+                        </div>
+
+                        @form(routes.CropController.save()) {
+                            <div class="card-body">
+                                @CSRF.formField
+
+                                @defining({
+                                    import scala.jdk.CollectionConverters._
+                                    companies.asInstanceOf[java.util.Map[String, String]].asScala.toSeq
+                                }) { companiesSeq =>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @simple_input(cropForm("name"), 
+                                                "Crop Name", 
+                                                icon = "fas fa-seedling",
+                                                required = true)
+                                        </div>
+                                        <div class="col-md-6">
+                                            @simple_select(
+                                                cropForm("company.id"),
+                                                "Company",
+                                                companiesSeq,
+                                                defaultText = "-- Choose a company --",
+                                                icon = "fas fa-building",
+                                                required = true
+                                            )
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @simple_input(cropForm("introduced"), 
+                                                "Introduced Date", 
+                                                inputType = "date",
+                                                icon = "fas fa-calendar",
+                                                help = Some("Date when this crop was first introduced"))
+                                        </div>
+                                        <div class="col-md-6">
+                                            @simple_input(cropForm("discontinued"), 
+                                                "Discontinued Date", 
+                                                inputType = "date",
+                                                icon = "fas fa-calendar",
+                                                help = Some("Date when this crop was discontinued"))
+                                        </div>
+                                    </div>
+
+                                }
+                            </div>
+
+                            <div class="card-footer">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-save mr-2"></i>Create Crop
+                                </button>
+                                <a href="@routes.CropController.list()" class="btn btn-secondary ml-2">
+                                    <i class="fas fa-times mr-2"></i>Cancel
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="actions">
-            <button class="btn btn-success" type="submit">Create this crop</button>
-            <span class="mx-2">or</span>
-            <a href="@routes.CropController.list()" id="add" class="btn btn-light" role="button">Cancel</a>
-        </div>
-    }
+    </section>
 
 }

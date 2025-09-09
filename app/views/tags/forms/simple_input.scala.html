@@ -1,0 +1,36 @@
+@(field: Field, label: String, inputType: String = "text", icon: String = "fas fa-edit", required: Boolean = false, help: Option[String] = None)(implicit messages: play.i18n.Messages)
+
+@import play.api.data.Field
+
+<div class="form-group">
+    <label for="@field.name" class="form-label">
+        @label
+        @if(required) { <span class="text-danger">*</span> }
+    </label>
+    
+    <div class="input-group mb-3">
+        <input 
+            type="@inputType" 
+            id="@field.name" 
+            name="@field.name" 
+            value="@field.value.getOrElse("")"
+            class="form-control @if(field.hasErrors){is-invalid}"
+            placeholder="@label"
+            @if(required) { required }
+        >
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <i class="@icon"></i>
+            </div>
+        </div>
+        @if(field.hasErrors) {
+            <div class="invalid-feedback">
+                @field.errors.mkString(", ")
+            </div>
+        }
+    </div>
+    
+    @help.map { helpText =>
+        <small class="form-text text-muted">@helpText</small>
+    }
+</div>
