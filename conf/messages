@@ -11,6 +11,7 @@ nav.soildiagnostics=Soil Diagnostics
 nav.pesticides=Pesticide Registration
 nav.logout=Logout
 nav.language=Language
+nav.dashboard=Dashboard
 
 # Authentication
 auth.login=Login
@@ -34,6 +35,10 @@ auth.reset.button=Reset Password
 auth.back.to.login=Back to login
 auth.no.account=Don''t have an account?
 auth.have.account=Already have an account?
+auth.login.subtitle=Sign in to start your session
+auth.register.subtitle=Register a new account
+auth.register.new.account=Register a new account
+auth.have.account.login=I already have an account
 
 # Crops
 crops.list.title={0,choice,0#No crops|1#One crop|1<{0,number,integer} crops} found
@@ -52,6 +57,14 @@ crops.cancel=Cancel
 crops.create.title=Add New Crop
 crops.edit.title=Edit Crop
 crops.delete.confirm=Are you sure you want to delete this crop?
+crops.list.subtitle=Registered Crops
+crops.add.button=Add New Crop
+crops.filter.placeholder=Search by crop name...
+crops.empty.message=No crops have been registered yet. Click the "Add New Crop" button to get started.
+crop.name=Name
+crop.introduced=Introduced
+crop.discontinued=Discontinued
+crop.company=Company
 
 # Fields
 fields.list.title={0,choice,0#No fields|1#One field|1<{0,number,integer} fields} found
@@ -151,6 +164,19 @@ common.processing=Processing...
 common.success=Success
 common.error=Error
 common.required=Required
+
+# Form
+form.actions=Actions
+form.edit=Edit
+form.not.set=Not set
+form.success=Success!
+
+# List
+list.empty.title=No Records Found
+
+# Pagination
+pagination.showing=Showing
+pagination.entries=entries
 
 # Loading Messages
 loading.default=Processing...
