@@ -11,6 +11,7 @@ nav.soildiagnostics=土壌診断
 nav.pesticides=農薬登録情報
 nav.logout=ログアウト
 nav.language=言語
+nav.dashboard=ダッシュボード
 
 # Authentication
 auth.login=ログイン
@@ -34,6 +35,10 @@ auth.reset.button=パスワード再設定
 auth.back.to.login=ログインに戻る
 auth.no.account=アカウントをお持ちでない場合
 auth.have.account=既にアカウントをお持ちの場合
+auth.login.subtitle=ログインしてセッションを開始
+auth.register.subtitle=新しいアカウントを登録
+auth.register.new.account=新しいアカウントを登録する
+auth.have.account.login=既にアカウントをお持ちの方
 
 # Crops
 crops.list.title={0,choice,0#作物なし|1#1件の作物|1<{0,number,integer}件の作物}が見つかりました
@@ -52,6 +57,14 @@ crops.cancel=キャンセル
 crops.create.title=新しい作物を追加
 crops.edit.title=作物を編集
 crops.delete.confirm=この作物を削除してもよろしいですか？
+crops.list.subtitle=登録済み作物
+crops.add.button=新しい作物を追加
+crops.filter.placeholder=作物名で検索...
+crops.empty.message=作物がまだ登録されていません。「新しい作物を追加」ボタンをクリックして開始してください。
+crop.name=名前
+crop.introduced=導入日
+crop.discontinued=廃止日
+crop.company=会社
 
 # Fields
 fields.list.title={0,choice,0#圃場なし|1#1件の圃場|1<{0,number,integer}件の圃場}が見つかりました
@@ -151,6 +164,19 @@ common.processing=処理中...
 common.success=成功
 common.error=エラー
 common.required=必須
+
+# Form
+form.actions=操作
+form.edit=編集
+form.not.set=未設定
+form.success=成功！
+
+# List
+list.empty.title=レコードが見つかりません
+
+# Pagination
+pagination.showing=表示中
+pagination.entries=件
 
 # Loading Messages
 loading.default=処理中です...
