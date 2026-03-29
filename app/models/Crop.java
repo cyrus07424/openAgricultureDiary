@@ -79,4 +79,3 @@ public class Crop extends BaseModel {
         this.user = user;
     }
 }
-

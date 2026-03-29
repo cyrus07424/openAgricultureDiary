@@ -24,4 +24,3 @@ public class Company extends BaseModel {
         this.name = name;
     }
 }
-
