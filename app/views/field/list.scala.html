@@ -53,7 +53,11 @@
 
 @main {
 
-  <h1 class="my-3" id="page-title">@Messages("fields.list.title", currentPage.getTotalCount)</h1>
+  <header class="page-hero"><div><div class="eyebrow">@messages("map.title")</div><h1 id="page-title">@Messages("fields.list.title", currentPage.getTotalCount)</h1><p>@messages("fields.map.hint")</p></div>
+    <a href="@routes.FieldController.create()" id="add" class="btn btn-success" role="button">@messages("fields.add.new")</a>
+  </header>
+
+  @views.html.field.map(currentPage.getList)
 
   @request.flash.asScala().get("success").map { successFlashValue =>
     <div class="alert alert-warning" role="alert">
@@ -65,21 +69,18 @@
     <div class="col-sm-6">
       <form class="form-inline" action="@link(0, "name")" method="GET">
         <div class="form-group mr-sm-2 mb-2">
-          <label for="searchbox" class="sr-only">Filter by field name...</label>
-          <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by field name...">
+          <label for="searchbox" class="sr-only">@messages("fields.search")</label>
+          <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="@messages("fields.search")">
         </div>
-        <button type="submit" id="searchsubmit" class="btn btn-primary mb-2">Filter by name</button>
+        <button type="submit" id="searchsubmit" class="btn btn-primary mb-2">@messages("common.search")</button>
       </form>
-    </div>
-    <div class="col-sm-6">
-      <a href="@routes.FieldController.create()" id="add" class="btn btn-success float-right" role="button">Add a new field</a>
     </div>
   </div>
 
   @if(currentPage.getTotalCount == 0) {
 
     <div class="card card-body bg-light">
-      <em>Nothing to display</em>
+      <em>@messages("map.empty")</em>
     </div>
 
   } else {
@@ -87,11 +88,11 @@
     <table class="table table-bordered table-striped table-hover">
       <thead class="thead-light">
         <tr>
-          @header("name", "Field name")
-          @header("northEastLatitude", "NE Latitude")
-          @header("northEastLongitude", "NE Longitude")
-          @header("southWestLatitude", "SW Latitude")
-          @header("southWestLongitude", "SW Longitude")
+          @header("name", messages("fields.name"))
+          @header("northEastLatitude", messages("map.ne.lat"))
+          @header("northEastLongitude", messages("map.ne.lng"))
+          @header("southWestLatitude", messages("map.sw.lat"))
+          @header("southWestLongitude", messages("map.sw.lng"))
         </tr>
       </thead>
       <tbody>

@@ -41,6 +41,16 @@ public class Field extends BaseModel {
         update();
     }
 
+    public boolean hasValidBounds() {
+        return northEastLatitude != null && northEastLongitude != null
+            && southWestLatitude != null && southWestLongitude != null
+            && Double.isFinite(northEastLatitude) && Double.isFinite(northEastLongitude)
+            && Double.isFinite(southWestLatitude) && Double.isFinite(southWestLongitude)
+            && southWestLatitude >= -85.051129 && northEastLatitude <= 85.051129
+            && southWestLongitude >= -180 && northEastLongitude <= 180
+            && northEastLatitude > southWestLatitude && northEastLongitude > southWestLongitude;
+    }
+
     public String getName() {
         return name;
     }

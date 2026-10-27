@@ -52,6 +52,14 @@ public class FieldController extends Controller {
         return request.attrs().get(AuthenticatedAction.USER_KEY);
     }
 
+    private Form<Field> bindFieldForm(Http.Request request) {
+        Form<Field> form = formFactory.form(Field.class).bindFromRequest(request);
+        if (!form.hasErrors() && !form.get().hasValidBounds()) {
+            return form.withError("northEastLatitude", "map.invalid");
+        }
+        return form;
+    }
+
     /**
      * This result directly redirect to application home.
      */
@@ -103,7 +111,7 @@ public class FieldController extends Controller {
      */
     public CompletionStage<Result> update(Http.Request request, Long id) throws PersistenceException {
         User user = getCurrentUser(request);
-        Form<Field> fieldForm = formFactory.form(Field.class).bindFromRequest(request);
+        Form<Field> fieldForm = bindFieldForm(request);
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(
@@ -148,7 +156,7 @@ public class FieldController extends Controller {
      */
     public CompletionStage<Result> save(Http.Request request) {
         User user = getCurrentUser(request);
-        Form<Field> fieldForm = formFactory.form(Field.class).bindFromRequest(request);
+        Form<Field> fieldForm = bindFieldForm(request);
         if (fieldForm.hasErrors()) {
             // This is the HTTP rendering thread context
             return java.util.concurrent.CompletableFuture.completedFuture(

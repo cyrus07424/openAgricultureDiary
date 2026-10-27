@@ -21,12 +21,12 @@ public class HomeController extends Controller {
     }
 
     /**
-     * Handle default path requests, redirect to crops list if authenticated, otherwise to login
+     * Handle default path requests, redirect to dashboard if authenticated, otherwise to login
      */
     public Result index(Http.Request request) {
         // Check if user is logged in
         if (request.session().get("userId").isPresent()) {
-            return Results.redirect(routes.CropController.list(0, "name", "asc", ""));
+            return Results.redirect(routes.DashboardController.index());
         } else {
             return Results.redirect(routes.AuthController.showLogin());
         }

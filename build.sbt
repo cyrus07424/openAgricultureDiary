@@ -9,20 +9,20 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       guice,
       jdbc,
-      ws, // Web Service client for HTTP requests
-      "org.postgresql" % "postgresql" % "42.7.3",
+      ws,
+      // Web Service client for HTTP requests
+      "org.postgresql" % "postgresql" % "42.7.14",
       "org.mindrot" % "jbcrypt" % "0.4",
       "me.gosimple" % "nbvcxz" % "1.5.1",
       // Play Mailer for email
-      "org.playframework" %% "play-mailer" % "10.0.0",
-      "org.playframework" %% "play-mailer-guice" % "10.0.0",
+      "org.playframework" %% "play-mailer" % "10.1.0",
+      "org.playframework" %% "play-mailer-guice" % "10.1.0",
       // WebJars
       "org.webjars" % "AdminLTE" % "3.2.0",
       "org.webjars.npm" % "zxcvbn" % "4.4.2",
       // Testing libraries for dealing with CompletionStage...
-      "com.h2database" % "h2" % "2.3.232" % Test,
-      "org.assertj" % "assertj-core" % "3.26.3" % Test,
-      "org.awaitility" % "awaitility" % "4.2.2" % Test,
+      "org.assertj" % "assertj-core" % "3.27.7" % Test,
+      "org.awaitility" % "awaitility" % "4.3.0" % Test,
       "org.mockito" % "mockito-core" % "5.8.0" % Test,
     ),
     javacOptions ++= Seq(

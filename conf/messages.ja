@@ -1,5 +1,48 @@
 # Japanese Messages
 
+# Map workspace
+nav.menu=ナビゲーションを開閉
+dashboard.title=農場のいまを、ひと目で。
+dashboard.subtitle=圃場の様子と日々の作業を、ひとつの場所から。
+dashboard.farm=圃場の全体像
+dashboard.recent=最近の作業
+dashboard.allwork=すべての作業記録を見る
+dashboard.empty.title=最初の圃場を登録しましょう
+dashboard.empty=地図で圃場を登録したら、作物や毎日の作業を記録できます。
+dashboard.empty.work.title=今日の作業を記録しましょう
+dashboard.empty.work=作物を登録し、最初の作業記録を追加すると、ここに最近の作業が表示されます。
+dashboard.map.hint=地図上の圃場を選択すると編集できます。登録したすべての圃場を表示しています。
+fields.map.hint=このページの圃場を地図に表示しています。圃場名で検索すると地図も絞り込まれます。
+fields.search=圃場名で検索
+work.map.hint=このページの作業が行われた圃場を地図に表示します。検索結果に合わせて地図も更新されます。
+map.title=圃場マップ
+map.basemap=背景地図
+map.pale=地理院地図 · 淡色
+map.standard=地理院地図 · 標準
+map.photo=地理院地図 · 航空写真
+map.fit=圃場全体を表示
+map.draw=範囲を選択
+map.loading=地図を読み込み中…
+map.ready=圃場を選択すると詳細を確認できます。右上のボタンで拡大・縮小できます。
+map.error=地図データを読み込めませんでした。接続を確認するか、背景地図を切り替えてください。座標の入力は引き続き利用できます。
+map.unavailable=地図を起動できませんでした。WebGLの対応状況と接続をご確認ください。座標は手動で入力できます。
+map.empty=表示する圃場がありません。圃場を追加するか検索条件を変更してください。
+map.first=「範囲を選択」を押し、圃場の対角となる2点を順にクリックしてください。
+map.second=反対側の角をクリックすると範囲が確定します。
+map.selected=圃場の範囲を更新しました。境界を確認して保存してください。
+map.invalid=有効な座標を入力してください。北東は南西より北・東に指定し、緯度は±85.051129度、経度は±180度以内にしてください。
+map.skipped=座標が不正な圃場は表示できません。一覧から該当の圃場を編集して座標を修正してください。
+map.editor.hint=圃場を地図で探し、対角となる2点を選択してください。座標の手入力も可能です。
+map.coordinates=圃場の境界座標
+map.coordinates.hint=地図と座標は連動します。新しい範囲は2点目を選択した時点で置き換わります。
+map.ne.lat=北東の緯度
+map.ne.lng=北東の経度
+map.sw.lat=南西の緯度
+map.sw.lng=南西の経度
+work.search=作業内容で検索
+work.start=開始時刻
+work.end=終了時刻
+
 # Application Title
 app.title=オープン農業日誌
 

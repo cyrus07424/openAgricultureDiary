@@ -7,69 +7,53 @@
 
 @main {
 
-    <h1 class="my-3" id="page-title">Edit field</h1>
+    <header class="page-hero"><div><div class="eyebrow">@messages("nav.fields")</div><h1 id="page-title">@messages("fields.edit.title")</h1><p>@messages("map.editor.hint")</p></div></header>
 
     @form(routes.FieldController.update(id)) {
 
         @CSRF.formField
         <div class="row">
             <div class="col-md-6 mb-3">
-            @inputText(fieldForm("name"), Symbol("_label") -> "Field name", Symbol("_help") -> "")
+            @inputText(fieldForm("name"), Symbol("_label") -> messages("fields.name"), Symbol("_help") -> "")
             </div>
         </div>
         
         <div class="row">
             <div class="col-md-12 mb-3">
-                <h4>Field Area (Rectangular Selection)</h4>
-                <p class="text-muted">Update the coordinates for the rectangular field area:</p>
+                @views.html.field.map(java.util.Collections.emptyList[models.Field](), true)
+                <h2>@messages("map.coordinates")</h2>
+                <p class="text-muted">@messages("map.coordinates.hint")</p>
             </div>
         </div>
         
         <div class="row">
             <div class="col-md-3 mb-3">
-            @inputText(fieldForm("northEastLatitude"), Symbol("_label") -> "North East Latitude", Symbol("_help") -> "")
+            @inputText(fieldForm("northEastLatitude"), Symbol("_label") -> messages("map.ne.lat"), Symbol("type") -> "number", Symbol("step") -> "any", Symbol("min") -> "-85.051129", Symbol("max") -> "85.051129", Symbol("_help") -> "")
             </div>
             <div class="col-md-3 mb-3">
-            @inputText(fieldForm("northEastLongitude"), Symbol("_label") -> "North East Longitude", Symbol("_help") -> "")
+            @inputText(fieldForm("northEastLongitude"), Symbol("_label") -> messages("map.ne.lng"), Symbol("type") -> "number", Symbol("step") -> "any", Symbol("min") -> "-180", Symbol("max") -> "180", Symbol("_help") -> "")
             </div>
         </div>
         
         <div class="row">
             <div class="col-md-3 mb-3">
-            @inputText(fieldForm("southWestLatitude"), Symbol("_label") -> "South West Latitude", Symbol("_help") -> "")
+            @inputText(fieldForm("southWestLatitude"), Symbol("_label") -> messages("map.sw.lat"), Symbol("type") -> "number", Symbol("step") -> "any", Symbol("min") -> "-85.051129", Symbol("max") -> "85.051129", Symbol("_help") -> "")
             </div>
             <div class="col-md-3 mb-3">
-            @inputText(fieldForm("southWestLongitude"), Symbol("_label") -> "South West Longitude", Symbol("_help") -> "")
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12 mb-3">
-                <div id="map" style="height: 400px; border: 1px solid #ccc;"></div>
-                <p class="text-muted mt-2">Click and drag on the map to update the rectangular area for your field.</p>
+            @inputText(fieldForm("southWestLongitude"), Symbol("_label") -> messages("map.sw.lng"), Symbol("type") -> "number", Symbol("step") -> "any", Symbol("min") -> "-180", Symbol("max") -> "180", Symbol("_help") -> "")
             </div>
         </div>
 
         <div class="actions">
-            <button class="btn btn-success" type="submit">Save this field</button>
-            <span class="mx-2">or</span>
-            <a href="@routes.FieldController.list()" id="add" class="btn btn-light" role="button">Cancel</a>
+            <button class="btn btn-success" type="submit">@messages("fields.save")</button>
+            <a href="@routes.FieldController.list()" id="add" class="btn btn-light ml-2" role="button">@messages("fields.cancel")</a>
         </div>
 
     }
 
     @form(routes.FieldController.delete(id), Symbol("class") -> "top-right") {
         @CSRF.formField
-        <button class="btn btn-danger" type="submit">Delete this field</button>
+        <button class="btn btn-danger" type="submit">@messages("fields.delete")</button>
     }
-
-    <script>
-        // Basic map integration placeholder
-        // This would be enhanced with actual map library (Leaflet, Google Maps, etc.)
-        document.addEventListener('DOMContentLoaded', function() {
-            var mapElement = document.getElementById('map');
-            mapElement.innerHTML = '<div style="text-align: center; padding-top: 180px; color: #666;">Map integration will be implemented here<br/>For now, please enter coordinates manually</div>';
-        });
-    </script>
 
 }

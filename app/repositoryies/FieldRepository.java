@@ -48,6 +48,12 @@ public class FieldRepository {
         return supplyAsync(() -> DB.find(Field.class).setId(id).findOneOrEmpty(), executionContext);
     }
 
+    public CompletionStage<java.util.List<Field>> listByUser(Long userId) {
+        return supplyAsync(() -> DB.find(Field.class)
+            .where().eq("user.id", userId)
+            .orderBy("name").findList(), executionContext);
+    }
+
     /**
      * Lookup a field by ID and ensure it belongs to the specified user
      */

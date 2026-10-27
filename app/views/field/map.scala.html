@@ -1,0 +1,36 @@
+@(fields: java.util.List[models.Field], editable: Boolean = false)(implicit request: Http.Request, messages: play.i18n.Messages)
+
+<section class="farm-map-panel" data-farm-map data-editable="@editable"
+    data-loading="@messages("map.loading")" data-ready="@messages("map.ready")"
+    data-error="@messages("map.error")" data-unavailable="@messages("map.unavailable")"
+    data-empty="@messages("map.empty")" data-first="@messages("map.first")"
+    data-second="@messages("map.second")" data-selected="@messages("map.selected")"
+    data-invalid="@messages("map.invalid")" data-open="@messages("fields.edit")"
+    data-skipped="@messages("map.skipped")">
+    <div class="map-toolbar">
+        <div class="map-caption"><span class="map-dot"></span> @messages("map.title")</div>
+        <div class="map-tools">
+            <label class="mb-0">@messages("map.basemap")
+                <select class="form-control form-control-sm map-basemap">
+                    <option value="pale">@messages("map.pale")</option>
+                    <option value="standard">@messages("map.standard")</option>
+                    <option value="photo">@messages("map.photo")</option>
+                    <option value="osm">OpenStreetMap</option>
+                </select>
+            </label>
+            <button type="button" class="btn btn-sm btn-outline-primary map-fit">@messages("map.fit")</button>
+            @if(editable) {
+                <button type="button" class="btn btn-sm btn-primary map-draw" aria-pressed="false">@messages("map.draw")</button>
+            }
+        </div>
+    </div>
+    <div class="farm-map" role="region" aria-label="@messages("map.title")"></div>
+    <div class="map-status" role="status" aria-live="polite">@messages("map.loading")</div>
+    <div class="map-field-data" hidden>
+        @for(field <- fields.asScala) {
+            <span data-name="@field.getName()" data-url="@routes.FieldController.edit(field.getId())"
+                data-ne-lat="@field.getNorthEastLatitude()" data-ne-lng="@field.getNorthEastLongitude()"
+                data-sw-lat="@field.getSouthWestLatitude()" data-sw-lng="@field.getSouthWestLongitude()"></span>
+        }
+    </div>
+</section>

@@ -65,9 +65,9 @@ public class AuthController extends Controller {
      * Display the login form
      */
     public Result showLogin(Http.Request request) {
-        // If user is already logged in, redirect to crops
+        // If user is already logged in, redirect to the dashboard
         if (request.session().get("userId").isPresent()) {
-            return Results.redirect(routes.CropController.list(0, "name", "asc", ""));
+            return Results.redirect(routes.DashboardController.index());
         }
         
         Form<LoginForm> loginForm = formFactory.form(LoginForm.class);
@@ -99,7 +99,7 @@ public class AuthController extends Controller {
                             return false;
                         });
                     
-                    return Results.redirect(routes.CropController.list(0, "name", "asc", ""))
+                    return Results.redirect(routes.DashboardController.index())
                             .addingToSession(request, "userId", user.getId().toString())
                             .flashing("success", "ログインしました");
                 }
@@ -117,9 +117,9 @@ public class AuthController extends Controller {
      * Display the registration form
      */
     public Result showRegister(Http.Request request) {
-        // If user is already logged in, redirect to crops
+        // If user is already logged in, redirect to the dashboard
         if (request.session().get("userId").isPresent()) {
-            return Results.redirect(routes.CropController.list(0, "name", "asc", ""));
+            return Results.redirect(routes.DashboardController.index());
         }
         
         Form<RegisterForm> registerForm = formFactory.form(RegisterForm.class);
@@ -220,7 +220,7 @@ public class AuthController extends Controller {
                         });
                     
                     return CompletableFuture.completedFuture(
-                        Results.redirect(routes.CropController.list(0, "name", "asc", ""))
+                        Results.redirect(routes.DashboardController.index())
                                 .addingToSession(request, "userId", userId.toString())
                                 .flashing("success", "アカウントが作成されました")
                     );

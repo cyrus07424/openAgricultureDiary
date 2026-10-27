@@ -69,11 +69,7 @@
         
         if (modal && messageElement) {
             messageElement.textContent = message;
-            const bootstrapModal = new bootstrap.Modal(modal, {
-                backdrop: 'static',
-                keyboard: false
-            });
-            bootstrapModal.show();
+            $(modal).modal({ backdrop: 'static', keyboard: false });
         }
     }
     
@@ -85,6 +81,7 @@
         
         forms.forEach(function(form) {
             form.addEventListener('submit', function(event) {
+                if (event.defaultPrevented) return;
                 const submitButton = form.querySelector('button[type="submit"]');
                 
                 // Prevent multiple submissions by disabling the submit button

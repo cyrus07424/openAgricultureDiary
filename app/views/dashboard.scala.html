@@ -1,0 +1,43 @@
+@(fields: java.util.List[models.Field], cropCount: Int, recentWork: io.ebean.PagedList[models.WorkHistory])(implicit request: Http.Request, messages: play.i18n.Messages)
+
+@main {
+    <header class="page-hero">
+        <div>
+            <div class="eyebrow">OPEN AGRICULTURE DIARY</div>
+            <h1 id="page-title">@messages("dashboard.title")</h1>
+            <p>@messages("dashboard.subtitle")</p>
+        </div>
+        <a class="btn btn-primary" href="@routes.WorkHistoryController.create()"><i class="fas fa-plus mr-2" aria-hidden="true"></i>@messages("workhistory.add.new")</a>
+    </header>
+    <div class="farm-stats">
+        <a class="stat-card" href="@routes.FieldController.list()"><span class="stat-icon"><i class="fas fa-map" aria-hidden="true"></i></span><div><span>@messages("nav.fields")</span><strong>@fields.size()</strong></div><i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        <a class="stat-card" href="@routes.CropController.list()"><span class="stat-icon stat-gold"><i class="fas fa-seedling" aria-hidden="true"></i></span><div><span>@messages("nav.crops")</span><strong>@cropCount</strong></div><i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        <a class="stat-card" href="@routes.WorkHistoryController.list()"><span class="stat-icon stat-blue"><i class="fas fa-clipboard-list" aria-hidden="true"></i></span><div><span>@messages("nav.workhistory")</span><strong>@recentWork.getTotalCount()</strong></div><i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="dashboard-grid">
+        <div>
+            <div class="section-heading"><h2>@messages("dashboard.farm")</h2><a href="@routes.FieldController.create()">@messages("fields.add.new") <i class="fas fa-arrow-right" aria-hidden="true"></i></a></div>
+            @views.html.field.map(fields)
+            <p class="map-hint"><i class="fas fa-info-circle" aria-hidden="true"></i> @messages("dashboard.map.hint")</p>
+        </div>
+        <aside class="activity-panel">
+            <div class="section-heading"><h2>@messages("dashboard.recent")</h2></div>
+            @if(recentWork.getList().isEmpty()) {
+                <div class="empty-state"><i class="fas fa-seedling" aria-hidden="true"></i>
+                    @if(fields.isEmpty()) {
+                        <h3>@messages("dashboard.empty.title")</h3><p>@messages("dashboard.empty")</p><a class="btn btn-outline-primary" href="@routes.FieldController.create()">@messages("fields.add.new")</a>
+                    } else {
+                        <h3>@messages("dashboard.empty.work.title")</h3><p>@messages("dashboard.empty.work")</p><a class="btn btn-outline-primary" href="@routes.WorkHistoryController.create()">@messages("workhistory.add.new")</a>
+                    }
+                </div>
+            } else {
+                <ol class="activity-list">
+                @for(work <- recentWork.getList().asScala) {
+                    <li><a href="@routes.WorkHistoryController.edit(work.getId())"><time>@work.getDate()</time><strong>@work.getContent()</strong><span>@if(work.getField() != null) {@work.getField().getName()} @if(work.getCrop() != null) { / @work.getCrop().getName()}</span></a></li>
+                }
+                </ol>
+                <a class="activity-more" href="@routes.WorkHistoryController.list()">@messages("dashboard.allwork") &rarr;</a>
+            }
+        </aside>
+    </div>
+}

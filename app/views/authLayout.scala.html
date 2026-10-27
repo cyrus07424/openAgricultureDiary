@@ -4,19 +4,18 @@
 @defining(GlobalConfigHelper.getLegalLinksConfiguration(request)) { legalLinks =>
 
 <!DOCTYPE html>
-<html class="hold-transition login-page">
+<html class="hold-transition login-page" lang="@messages.lang().code()">
   <head>
     <meta charset="utf-8">
     <title>@messages("app.title")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- AdminLTE CSS -->
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/AdminLTE/css/adminlte.min.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/AdminLTE/dist/css/adminlte.min.css")">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Bootstrap -->
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
     <!-- Custom styles -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")"/>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/farm-workspace.css")"/>
     @Html(gtm.getHeadScript.toString)
   </head>
   <body class="hold-transition login-page">
@@ -31,7 +30,7 @@
         
         <div class="navbar-nav ml-auto">
           <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
               <i class="fas fa-globe mr-1"></i>@messages("nav.language")
             </a>
             <ul class="dropdown-menu" aria-labelledby="languageDropdown">
@@ -83,9 +82,9 @@
     <!-- jQuery -->
     <script src="@routes.Assets.versioned("lib/AdminLTE/plugins/jquery/jquery.min.js")"></script>
     <!-- Bootstrap 4 -->
-    <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <script src="@routes.Assets.versioned("lib/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
     <!-- AdminLTE App -->
-    <script src="@routes.Assets.versioned("lib/AdminLTE/js/adminlte.min.js")"></script>
+    <script src="@routes.Assets.versioned("lib/AdminLTE/dist/js/adminlte.min.js")"></script>
     <script>
       // Set up internationalized loading messages for JavaScript
       window.loadingMessages = {

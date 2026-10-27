@@ -52,7 +52,11 @@
 
 @main {
 
-  <h1 class="my-3" id="page-title">作業履歴 (@currentPage.getTotalCount 件)</h1>
+  <header class="page-hero"><div><div class="eyebrow">@messages("nav.workhistory")</div><h1 id="page-title">@messages("workhistory.management") (@currentPage.getTotalCount)</h1><p>@messages("work.map.hint")</p></div>
+    <a href="@routes.WorkHistoryController.create()" id="add" class="btn btn-success" role="button">@messages("workhistory.add.new")</a>
+  </header>
+
+  @views.html.field.map(currentPage.getList.asScala.flatMap(work => Option(work.getField())).distinct.toList.asJava)
 
   @request.flash.asScala().get("success").map { successFlashValue =>
     <div class="alert alert-warning" role="alert">
@@ -64,21 +68,18 @@
     <div class="col-sm-6">
       <form class="form-inline" action="@link(0, "content")" method="GET">
         <div class="form-group mr-sm-2 mb-2">
-          <label for="searchbox" class="sr-only">Filter by content...</label>
-          <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by content...">
+          <label for="searchbox" class="sr-only">@messages("work.search")</label>
+          <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="@messages("work.search")">
         </div>
-        <button type="submit" id="searchsubmit" class="btn btn-primary mb-2">Filter by content</button>
+        <button type="submit" id="searchsubmit" class="btn btn-primary mb-2">@messages("common.search")</button>
       </form>
-    </div>
-    <div class="col-sm-6">
-      <a href="@routes.WorkHistoryController.create()" id="add" class="btn btn-success float-right" role="button">Add a new work history</a>
     </div>
   </div>
 
   @if(currentPage.getTotalCount == 0) {
 
     <div class="card card-body bg-light">
-      <em>Nothing to display</em>
+      <em>@messages("list.empty.title")</em>
     </div>
 
   } else {
@@ -86,12 +87,12 @@
     <table class="table table-bordered table-striped table-hover">
       <thead class="thead-light">
         <tr>
-          @header("date", "Date")
-          @header("startTime", "Start Time")
-          @header("endTime", "End Time")
-          @header("field.name", "Field")
-          @header("crop.name", "Crop")
-          @header("content", "Content")
+          @header("date", messages("workhistory.date"))
+          @header("startTime", messages("work.start"))
+          @header("endTime", messages("work.end"))
+          @header("field.name", messages("workhistory.field"))
+          @header("crop.name", messages("workhistory.crop"))
+          @header("content", messages("workhistory.description"))
         </tr>
       </thead>
       <tbody>

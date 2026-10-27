@@ -1,5 +1,48 @@
 # English Messages (Default)
 
+# Map workspace
+nav.menu=Toggle navigation
+dashboard.title=Your farm, at a glance
+dashboard.subtitle=Explore your fields and keep each day of farming connected.
+dashboard.farm=Field overview
+dashboard.recent=Recent activity
+dashboard.allwork=View all work records
+dashboard.empty.title=Start with your first field
+dashboard.empty=Add a field on the map, then record your crops and daily work.
+dashboard.empty.work.title=Your next step: record your work
+dashboard.empty.work=Register a crop and add your first work record. Your recent activity will appear here.
+dashboard.map.hint=Select a field on the map to view or edit it. All your registered fields are shown.
+fields.map.hint=The map shows fields on this page. Search by name to narrow the results.
+fields.search=Search fields by name
+work.map.hint=See the locations of the work records on this page. Filtering updates the map too.
+map.title=Field map
+map.basemap=Basemap
+map.pale=GSI · Light
+map.standard=GSI · Standard
+map.photo=GSI · Aerial imagery
+map.fit=Fit fields
+map.draw=Select area
+map.loading=Loading map…
+map.ready=Select a field to see its details. Use the controls to zoom and rotate.
+map.error=Map data could not be loaded. Check your connection or try another basemap. Coordinate entry remains available.
+map.unavailable=The map could not start. Check WebGL support and your connection. You can still enter coordinates below.
+map.empty=No fields to display. Add a field or change your search.
+map.first=Choose “Select area”, then click two opposite corners of your field.
+map.second=Click the opposite corner to complete the rectangle.
+map.selected=Field area updated. Check the boundary, then save the form.
+map.invalid=Enter valid coordinates: north must be above south, east must be right of west, latitude within ±85.051129°, longitude within ±180°.
+map.skipped=Some fields have invalid coordinates and cannot be shown. Please correct their coordinates in the list below.
+map.editor.hint=Find your field on the map and select its two opposite corners. You can also enter coordinates manually.
+map.coordinates=Boundary coordinates
+map.coordinates.hint=The map and coordinates stay in sync. Selecting a new area replaces the boundary only when both corners are chosen.
+map.ne.lat=North-east latitude
+map.ne.lng=North-east longitude
+map.sw.lat=South-west latitude
+map.sw.lng=South-west longitude
+work.search=Search work descriptions
+work.start=Start time
+work.end=End time
+
 # Application Title
 app.title=Open Agriculture Diary
 
@@ -256,5 +299,3 @@ validation.username.exists=Username already exists.
 validation.email.exists=Email address already exists.
 validation.login.failed=Invalid username or password.
 validation.terms.agree=You must agree to the terms of service.
-
-
