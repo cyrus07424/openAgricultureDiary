@@ -297,5 +297,5 @@ validation.password.strength.success=✓ Password strength: {0}
 validation.password.strength.hint=Hint: {0}
 validation.username.exists=Username already exists.
 validation.email.exists=Email address already exists.
-validation.login.failed=Invalid username or password.
+validation.login.failed=Invalid email address or password.
 validation.terms.agree=You must agree to the terms of service.

@@ -5,7 +5,8 @@ import play.data.validation.Constraints;
 public class LoginForm {
     
     @Constraints.Required
-    private String username;
+    @Constraints.Email
+    private String email;
     
     @Constraints.Required
     private String password;
@@ -13,12 +14,12 @@ public class LoginForm {
     public LoginForm() {
     }
     
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
     
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
     
     public String getPassword() {

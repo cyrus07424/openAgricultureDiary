@@ -27,6 +27,7 @@ import views.html.auth.register;
 import views.html.auth.resetPassword;
 
 import javax.inject.Inject;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -87,8 +88,9 @@ public class AuthController extends Controller {
         }
 
         LoginForm data = loginForm.get();
+        String email = data.getEmail().trim().toLowerCase(Locale.ROOT);
         
-        return userRepository.findByUsername(data.getUsername()).thenApplyAsync(userOptional -> {
+        return userRepository.findByEmail(email).thenApplyAsync(userOptional -> {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 if (user.checkPassword(data.getPassword())) {
@@ -106,7 +108,7 @@ public class AuthController extends Controller {
             }
             
             return badRequest(login.render(
-                loginForm.withError("username", "ユーザー名またはパスワードが間違っています"),
+                loginForm.withError("email", "メールアドレスまたはパスワードが間違っています"),
                 request, 
                 messagesApi.preferred(request)
             ));
@@ -139,6 +141,7 @@ public class AuthController extends Controller {
         }
 
         RegisterForm data = registerForm.get();
+        data.setEmail(data.getEmail().trim().toLowerCase(Locale.ROOT));
         
         // Check if Terms of Service agreement is required and provided
         LegalLinksConfiguration legalLinks = request.attrs().get(GlobalConfigAction.LEGAL_LINKS_KEY);
