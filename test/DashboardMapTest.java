@@ -83,7 +83,7 @@ public class DashboardMapTest extends WithApplication {
         assertThat(route(app, get("/register", owner)).redirectLocation()).hasValue("/dashboard");
         Result login = route(app, addCSRFToken(fakeRequest(POST, "/login")
             .header(HOST, "localhost:19001")
-            .bodyForm(Map.of("username", "owner", "password", "Preview-only-password-42!"))));
+            .bodyForm(Map.of("email", owner.getEmail(), "password", "Preview-only-password-42!"))));
         assertThat(login.redirectLocation()).hasValue("/dashboard");
 
         String filtered = contentAsString(route(app, get("/fields?f=Owned%20field%2011", owner)));

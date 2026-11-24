@@ -297,5 +297,5 @@ validation.password.strength.success=✓ パスワード強度: {0}
 validation.password.strength.hint=ヒント: {0}
 validation.username.exists=このユーザー名は既に使用されています。
 validation.email.exists=このメールアドレスは既に使用されています。
-validation.login.failed=ユーザー名またはパスワードが正しくありません。
+validation.login.failed=メールアドレスまたはパスワードが正しくありません。
 validation.terms.agree=利用規約に同意する必要があります。

@@ -48,18 +48,18 @@
           @CSRF.formField
           
           <div class="input-group mb-3">
-            <input type="text" class="form-control @if(loginForm("username").hasErrors){is-invalid}" 
-                   name="@loginForm("username").name" 
-                   value="@loginForm("username").value.getOrElse("")"
-                   placeholder="@messages("auth.username")">
+            <input type="email" class="form-control @if(loginForm("email").hasErrors){is-invalid}"
+                   name="@loginForm("email").name"
+                   value="@loginForm("email").value.getOrElse("")"
+                   placeholder="@messages("auth.email")">
             <div class="input-group-append">
               <div class="input-group-text">
-                <span class="fas fa-user"></span>
+                <span class="fas fa-envelope"></span>
               </div>
             </div>
-            @if(loginForm("username").hasErrors) {
+            @if(loginForm("email").hasErrors) {
               <div class="invalid-feedback">
-                @loginForm("username").errors.mkString(", ")
+                @loginForm("email").errors.mkString(", ")
               </div>
             }
           </div>
