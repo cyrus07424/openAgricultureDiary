@@ -126,7 +126,7 @@
 
       <!-- Footer -->
       <footer class="main-footer">
-        <strong>Copyright &copy; 2024 @messages("app.title").</strong>
+        <strong>Copyright &copy; @java.time.Year.now().getValue() @messages("app.title").</strong>
         All rights reserved.
         @if(legalLinks.hasTermsOfServiceUrl() || legalLinks.hasPrivacyPolicyUrl()) {
           <div class="float-right d-none d-sm-inline-block">

@@ -84,7 +84,7 @@ auth.register.new.account=新しいアカウントを登録する
 auth.have.account.login=既にアカウントをお持ちの方
 
 # Crops
-crops.list.title={0,choice,0#作物なし|1#1件の作物|1<{0,number,integer}件の作物}が見つかりました
+crops.list.title={0,choice,0#作物が登録されていません|1#1件の作物が見つかりました|1<{0,number,integer}件の作物が見つかりました}
 crops.management=作物管理
 crops.add.new=新しい作物を追加
 crops.name=作物名
@@ -110,7 +110,7 @@ crop.discontinued=廃止日
 crop.company=会社
 
 # Fields
-fields.list.title={0,choice,0#圃場なし|1#1件の圃場|1<{0,number,integer}件の圃場}が見つかりました
+fields.list.title={0,choice,0#圃場が登録されていません|1#1件の圃場が見つかりました|1<{0,number,integer}件の圃場が見つかりました}
 fields.management=圃場管理
 fields.add.new=新しい圃場を追加
 fields.name=圃場名
@@ -172,7 +172,7 @@ soildiagnostics.cancel=キャンセル
 soildiagnostics.create.title=新しい土壌診断を追加
 soildiagnostics.edit.title=土壌診断を編集
 soildiagnostics.delete.confirm=この土壌診断を削除してもよろしいですか？
-soildiagnostics.list.title={0,choice,0#土壌診断なし|1#1件の土壌診断|1<{0,number,integer}件の土壌診断}が見つかりました
+soildiagnostics.list.title={0,choice,0#土壌診断が登録されていません|1#1件の土壌診断が見つかりました|1<{0,number,integer}件の土壌診断が見つかりました}
 soildiagnostics.search.placeholder=圃場名で検索...
 soildiagnostics.ph.measurements=pH測定値
 soildiagnostics.electrical.properties=電気的性質
