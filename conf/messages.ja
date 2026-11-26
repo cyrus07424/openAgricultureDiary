@@ -50,7 +50,7 @@ app.title=オープン農業日誌
 nav.crops=作物管理
 nav.fields=圃場管理
 nav.workhistory=作業履歴
-nav.soildiagnostics=土壌診断
+nav.soildiagnostics=土壌診断履歴
 nav.pesticides=農薬登録情報
 nav.logout=ログアウト
 nav.language=言語
@@ -147,7 +147,7 @@ workhistory.edit.title=作業記録を編集
 workhistory.delete.confirm=この作業記録を削除してもよろしいですか？
 
 # Soil Diagnostics
-soildiagnostics.management=土壌診断
+soildiagnostics.management=土壌診断履歴
 soildiagnostics.add.new=新しい土壌診断を追加
 soildiagnostics.date=診断日
 soildiagnostics.field=圃場
