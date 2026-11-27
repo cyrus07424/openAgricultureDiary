@@ -2,6 +2,8 @@ package actions;
 
 import controllers.routes;
 import models.User;
+import play.i18n.Messages;
+import play.i18n.MessagesApi;
 import play.libs.concurrent.ClassLoaderExecutionContext;
 import play.mvc.Action;
 import play.mvc.Http;
@@ -21,12 +23,15 @@ public class AdminAction extends Action<Admin> {
 
     private final UserRepository userRepository;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
+    private final MessagesApi messagesApi;
 
     @Inject
     public AdminAction(UserRepository userRepository, 
-                       ClassLoaderExecutionContext classLoaderExecutionContext) {
+                       ClassLoaderExecutionContext classLoaderExecutionContext,
+                       MessagesApi messagesApi) {
         this.userRepository = userRepository;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
+        this.messagesApi = messagesApi;
     }
 
     @Override
@@ -53,8 +58,9 @@ public class AdminAction extends Action<Admin> {
                 
                 User user = userOptional.get();
                 if (!user.isAdmin()) {
+                    Messages messages = messagesApi.preferred(request);
                     return CompletableFuture.completedFuture(
-                        Results.forbidden("管理者権限が必要です")
+                        Results.forbidden(views.html.errors.forbidden.render(request, messages))
                     );
                 }
                 

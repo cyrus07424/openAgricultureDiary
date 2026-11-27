@@ -191,6 +191,11 @@ pesticides.clear=全削除
 pesticides.upload.title=農薬データアップロード
 pesticides.clear.confirm=全ての農薬データを削除してもよろしいですか？
 
+# Errors
+error.forbidden.title=アクセス権限がありません
+error.forbidden.message=このページを表示するには管理者権限が必要です。
+error.forbidden.backToDashboard=ダッシュボードへ戻る
+
 # Common
 common.search=検索
 common.add=追加
