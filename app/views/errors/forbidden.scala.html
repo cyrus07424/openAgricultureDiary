@@ -1,0 +1,22 @@
+@()(implicit request: Http.Request, messages: play.i18n.Messages)
+
+@main {
+    <div class="content-header">
+        <div class="container-fluid">
+            <h1 id="page-title">@messages("error.forbidden.title")</h1>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <p>@messages("error.forbidden.message")</p>
+                    <a href="@routes.DashboardController.index()" class="btn btn-primary">
+                        @messages("error.forbidden.backToDashboard")
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+}

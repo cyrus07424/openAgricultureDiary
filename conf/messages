@@ -191,6 +191,11 @@ pesticides.clear=Clear All
 pesticides.upload.title=Upload Pesticide Data
 pesticides.clear.confirm=Are you sure you want to clear all pesticide data?
 
+# Errors
+error.forbidden.title=Access denied
+error.forbidden.message=Administrator privileges are required to view this page.
+error.forbidden.backToDashboard=Back to dashboard
+
 # Common
 common.search=Search
 common.add=Add
