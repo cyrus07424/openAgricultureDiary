@@ -10,6 +10,8 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import repositoryies.UserRepository;
+import utils.GoogleTagManager;
+import utils.LegalLinksConfiguration;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -24,14 +26,20 @@ public class AdminAction extends Action<Admin> {
     private final UserRepository userRepository;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final MessagesApi messagesApi;
+    private final GoogleTagManager gtm;
+    private final LegalLinksConfiguration legalLinks;
 
     @Inject
     public AdminAction(UserRepository userRepository, 
                        ClassLoaderExecutionContext classLoaderExecutionContext,
-                       MessagesApi messagesApi) {
+                       MessagesApi messagesApi,
+                       GoogleTagManager gtm,
+                       LegalLinksConfiguration legalLinks) {
         this.userRepository = userRepository;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.messagesApi = messagesApi;
+        this.gtm = gtm;
+        this.legalLinks = legalLinks;
     }
 
     @Override
@@ -59,8 +67,11 @@ public class AdminAction extends Action<Admin> {
                 User user = userOptional.get();
                 if (!user.isAdmin()) {
                     Messages messages = messagesApi.preferred(request);
+                    Http.Request enhancedRequest = request
+                        .addAttr(GlobalConfigAction.GTM_KEY, gtm != null ? gtm : new GoogleTagManager(null))
+                        .addAttr(GlobalConfigAction.LEGAL_LINKS_KEY, legalLinks != null ? legalLinks : new LegalLinksConfiguration(null));
                     return CompletableFuture.completedFuture(
-                        Results.forbidden(views.html.errors.forbidden.render(request, messages))
+                        Results.forbidden(views.html.errors.forbidden.render(enhancedRequest, messages))
                     );
                 }
                 
